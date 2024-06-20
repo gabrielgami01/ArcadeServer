@@ -42,3 +42,6 @@ extension User: Validatable {
         validations.add("password", as: String.self, is: .count(8...) && .alphanumeric)
     }
 }
+
+extension User: ModelSessionAuthenticatable, ModelCredentialsAuthenticatable {}
+

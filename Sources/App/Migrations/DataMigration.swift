@@ -1,7 +1,7 @@
 import Vapor
 import Fluent
 
-struct MaestrosMigration: AsyncMigration {
+struct DataMigration: AsyncMigration {
     func prepare(on database: any Database) async throws {
         let consoles = [Console(name: "Arcade"),
                         Console(name: "NES"),
