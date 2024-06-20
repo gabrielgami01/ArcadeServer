@@ -6,13 +6,16 @@ import Vapor
 
 // configures your application
 public func configure(_ app: Application) async throws {
-    // uncomment to serve files from /Public folder
     app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
+    
+    app.databases.use(try .postgres(url: "postgres://arcadeuser:arcadbpass@localhost:55000/arcadedb"), as: .psql)
 
+    app.migrations.add(ConsoleMigration())
+    app.migrations.add(GenreMigration())
+    app.migrations.add(GameMigration())
+    app.migrations.add(MaestrosMigration())
 
     app.views.use(.leaf)
 
-
-    // register routes
     try routes(app)
 }
