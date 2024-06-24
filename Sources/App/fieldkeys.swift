@@ -24,6 +24,7 @@ extension FieldKey {
     static let username = FieldKey("username")
     static let password = FieldKey("password")
     static let email = FieldKey("email")
+    static let fullName = FieldKey("fullname")
     static let biography = FieldKey("biography")
     static let avatarURL = FieldKey("avatar_url")
     static let createdAt = FieldKey("created_at")

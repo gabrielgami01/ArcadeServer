@@ -31,14 +31,16 @@ struct UserController: RouteCollection {
     @Sendable func createUser(req: Request) async throws -> HTTPStatus {
         try User.validate(content: req)
         let user = try req.content.decode(User.self)
-        let existingUser = try await User.query(on: req.db)
-            .group(.or) { group in
-                group
-                    .filter(\.$username == user.username)
-                    .filter(\.$email == user.email)
-            }
+        
+        let existingUsername = try await User.query(on: req.db)
+            .filter(\.$username == user.username)
             .first()
-        guard existingUser == nil else { throw Abort(.badRequest, reason: "Error procesing request.") }
+        guard existingUsername == nil else { throw Abort(.conflict, reason: "Username already exists") }
+        
+        let existingEmail = try await User.query(on: req.db)
+            .filter(\.$email == user.email)
+            .first()
+        guard existingEmail == nil else { throw Abort(.conflict, reason: "Already have an account") }
         
         user.password = try Bcrypt.hash("\(user.username)@\(user.password)")
         try await user.create(on: req.db)
@@ -47,9 +49,9 @@ struct UserController: RouteCollection {
         return .created
     }
     
-    @Sendable func loginJWT(req: Request) async throws -> String {
+    @Sendable func loginJWT(req: Request) async throws -> TokenDTO {
         let user = try req.auth.require(User.self)
-        let token = try generateJWT(req: req, subject: user.requireID().uuidString)
+        let token = try TokenDTO(token: generateJWT(req: req, subject: user.requireID().uuidString))
         return token
     }
     
