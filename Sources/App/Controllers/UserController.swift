@@ -31,16 +31,14 @@ struct UserController: RouteCollection {
     @Sendable func createUser(req: Request) async throws -> HTTPStatus {
         try User.validate(content: req)
         let user = try req.content.decode(User.self)
-        
-        let existingUsername = try await User.query(on: req.db)
-            .filter(\.$username == user.username)
+        let existingUser = try await User.query(on: req.db)
+            .group(.or) { group in
+                group
+                    .filter(\.$username == user.username)
+                    .filter(\.$email == user.email)
+            }
             .first()
-        guard existingUsername == nil else { throw Abort(.conflict, reason: "Username already exists") }
-        
-        let existingEmail = try await User.query(on: req.db)
-            .filter(\.$email == user.email)
-            .first()
-        guard existingEmail == nil else { throw Abort(.conflict, reason: "Already have an account") }
+        guard existingUser == nil else { throw Abort(.badRequest, reason: "Error procesing request.") }
         
         user.password = try Bcrypt.hash("\(user.username)@\(user.password)")
         try await user.create(on: req.db)
