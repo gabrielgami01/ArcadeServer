@@ -5,7 +5,7 @@ import JWT
 final class AppAPIKeyAuthenticator: Middleware {
     func respond(to request: Request, chainingTo next: any Responder) -> EventLoopFuture<Response> {
         guard let header = request.headers["App-APIKey"].first,
-              header == "tokensito" else {
+              header == "aqp4IkrRYkI2RnB8SkIhuk3nT0yQL/Z7v7TH2hAx+0A=" else {
             return request.eventLoop.makeFailedFuture(Abort(.unauthorized))
         }
         return next.respond(to: request)
