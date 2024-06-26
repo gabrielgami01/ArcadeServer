@@ -6,6 +6,7 @@ struct ConsoleController: RouteCollection {
         let api = routes.grouped("api", "consoles")
         let jwtSecure = api.grouped(UserPayload.authenticator(),
                                     UserPayload.guardMiddleware())
+        
         jwtSecure.get(use: getAllConsoles)
     }
     

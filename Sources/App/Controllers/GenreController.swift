@@ -6,6 +6,7 @@ struct GenreController: RouteCollection {
         let api = routes.grouped("api", "genres")
         let jwtSecure = api.grouped(UserPayload.authenticator(),
                                     UserPayload.guardMiddleware())
+        
         jwtSecure.get(use: getAllGenres)
     }
     
