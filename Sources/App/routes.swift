@@ -2,8 +2,7 @@ import Fluent
 import Vapor
 
 func routes(_ app: Application) throws {
-    try app.register(collection: UserController())
-    try app.register(collection: ConsoleController())
-    try app.register(collection: GenreController())
-    try app.register(collection: GameController())
+    try app.register(collection: UsersController())
+    try app.register(collection: MastersController())
+    try app.register(collection: GamesController())
 }
