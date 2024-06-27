@@ -1,12 +1,11 @@
 import Vapor
 import Fluent
 
-struct GameController: RouteCollection {
+struct GamesController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let api = routes.grouped("api", "games")
         let jwtSecure = api.grouped(UserPayload.authenticator(),
                                     UserPayload.guardMiddleware())
-        
         jwtSecure.get("byConsole", ":consoleID", use: getGamesByConsole)
         jwtSecure.get("byGenre", ":genreID", use: getGamesByGenre)
     }

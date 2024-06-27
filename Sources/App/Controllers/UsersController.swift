@@ -12,13 +12,13 @@ final class AppAPIKeyAuthenticator: Middleware {
     }
 }
 
-struct UserController: RouteCollection {
+struct UsersController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let api = routes.grouped("api", "users")
         
         let create = api.grouped(AppAPIKeyAuthenticator())
         create.post("create", use: createUser)
-        
+    
         let secure = api.grouped(User.authenticator())
             .grouped(User.guardMiddleware())
         secure.get("loginJWT", use: loginJWT)
@@ -59,7 +59,7 @@ struct UserController: RouteCollection {
     }
 }
 
-extension UserController {
+extension UsersController {
     private func generateJWT(req: Request, subject: String) throws -> String {
         guard let fecha = Calendar.current.date(byAdding: .day, value: 2, to: Date()) else {
             throw Abort(.badRequest)
