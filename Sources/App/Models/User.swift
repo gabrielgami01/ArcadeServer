@@ -15,6 +15,8 @@ final class User: Model, Content {
     @Field(key: .avatarURL) var avatarURL: String?
     @Timestamp(key: .createdAt, on: .create) var createdAt: Date?
     
+    @Siblings(through: FavoriteGame.self, from: \.$user, to: \.$game) var games: [Game]
+    
     init() {}
     
     init(id: UUID? = nil, username: String, password: String, email: String, fullName: String, biography: String? = nil, avatarURL: String? = nil, createdAt: Date? = nil) {

@@ -13,8 +13,10 @@ public func configure(_ app: Application) async throws {
 
     app.migrations.add(MastersMigration())
     app.migrations.add(GameMigration())
-    app.migrations.add(DataMigration())
     app.migrations.add(UserMigration())
+    app.migrations.add(FavoriteGameMigration())
+    
+    app.migrations.add(DataMigration())
 
     app.views.use(.leaf)
 
