@@ -10,6 +10,7 @@ struct GamesController: RouteCollection {
         games.get("byConsole", ":consoleID", use: getGamesByConsole)
         games.get("byGenre", ":genreID", use: getGamesByGenre)
         games.get("featured", use: getFeaturedGames)
+        games.get("search", ":gameName", use: searchGame)
         
         let favorites = games.grouped("favorites")
         favorites.get(use: getUserFavoriteGames)
@@ -110,6 +111,23 @@ struct GamesController: RouteCollection {
         
         let games = try await user.$games
             .query(on: req.db)
+            .with(\.$console)
+            .with(\.$genre)
+            .all()
+        
+        return try Game.toGameResponse(games: games)
+    }
+    
+    @Sendable func searchGame(req: Request) async throws -> [Game.GameResponse] {
+        guard let gameName = req.parameters.get("gameName", as: String.self) else {
+            throw Abort(.badRequest, reason: "Game not found")
+        }
+        //Esto envuelve gameName con comodines %, lo que significa que cualquier juego cuyo nombre contenga gameName será coincidente.
+        let searchPattern = "%\(gameName)%"
+
+        let games = try await Game
+            .query(on: req.db)
+            .filter(\.$name, .custom("ILIKE"), searchPattern)
             .with(\.$console)
             .with(\.$genre)
             .all()
