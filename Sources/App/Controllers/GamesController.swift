@@ -10,7 +10,7 @@ struct GamesController: RouteCollection {
         games.get("byConsole", ":consoleID", use: getGamesByConsole)
         games.get("byGenre", ":genreID", use: getGamesByGenre)
         games.get("featured", use: getFeaturedGames)
-        games.get("search", ":gameName", use: searchGame)
+        games.get("search", use: searchGame)
         
         let favorites = games.grouped("favorites")
         favorites.get(use: getUserFavoriteGames)
@@ -119,9 +119,9 @@ struct GamesController: RouteCollection {
     }
     
     @Sendable func searchGame(req: Request) async throws -> [Game.GameResponse] {
-        guard let gameName = req.parameters.get("gameName", as: String.self) else {
-            throw Abort(.badRequest, reason: "Game not found")
-        }
+        guard let gameName = req.query[String.self, at: "gameName"] else {
+                throw Abort(.badRequest, reason: "Query parameter 'gameName' is required")
+            }
         //Esto envuelve gameName con comodines %, lo que significa que cualquier juego cuyo nombre contenga gameName será coincidente.
         let searchPattern = "%\(gameName)%"
 
