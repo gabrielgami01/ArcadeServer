@@ -12,15 +12,39 @@ struct GamesController: RouteCollection {
         games.get("featured", use: getFeaturedGames)
         games.get("search", use: searchGame)
         
-        let favorites = games.grouped("favorites")
-        favorites.get(use: getUserFavoriteGames)
-        favorites.post(":gameID", use: addFavoriteGame)
-        favorites.delete(":gameID", use: removeFavoriteGame)
+        games.group("favorites") { game in
+            game.get(use: getUserFavoriteGames)
+            game.post(use: addFavoriteGame)
+            game.delete(use: removeFavoriteGame)
+        }
+        
+        games.group("reviews") { game in
+            game.get(use: getUserFavoriteGames)
+            game.post(use: addFavoriteGame)
+            game.delete(use: removeFavoriteGame)
+        }
     }
     
     @Sendable func getAllGames(req: Request) async throws -> [Game.GameResponse] {
         let games = try await Game
             .query(on: req.db)
+            .with(\.$console)
+            .with(\.$genre)
+            .all()
+        
+        return try Game.toGameResponse(games: games)
+    }
+    
+    @Sendable func searchGame(req: Request) async throws -> [Game.GameResponse] {
+        guard let gameName = req.query[String.self, at: "gameName"] else {
+                throw Abort(.badRequest, reason: "Query parameter 'gameName' is required")
+            }
+        //Esto envuelve gameName con comodines %, lo que significa que cualquier juego cuyo nombre contenga gameName será coincidente.
+        let searchPattern = "%\(gameName)%"
+
+        let games = try await Game
+            .query(on: req.db)
+            .filter(\.$name, .custom("ILIKE"), searchPattern)
             .with(\.$console)
             .with(\.$genre)
             .all()
@@ -69,31 +93,34 @@ struct GamesController: RouteCollection {
         return try Game.toGameResponse(games: games)
     }
     
+    
     @Sendable func addFavoriteGame(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
         
-        guard let gameID = req.parameters.get("gameID", as: UUID.self),
-              let game = try await Game.find(gameID, on: req.db),
+        let gameDTO = try req.content.decode(FavoriteGameDTO.self)
+        
+        guard let game = try await Game.find(gameDTO.id, on: req.db),
               let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
             throw Abort(.notFound, reason: "Game not found")
         }
-        
+                
         //try await user.$games.load(on: req.db)
-        try await user.$games.attach(game, method: .ifNotExists, on: req.db)
+        try await user.$gamesFavorites.attach(game, method: .ifNotExists, on: req.db)
         return .ok
     }
     
     @Sendable func removeFavoriteGame(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
         
-        guard let gameID = req.parameters.get("gameID", as: UUID.self),
-              let game = try await Game.find(gameID, on: req.db),
+        let gameDTO = try req.content.decode(FavoriteGameDTO.self)
+        
+        guard let game = try await Game.find(gameDTO.id, on: req.db),
               let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
             throw Abort(.notFound, reason: "Game not found")
         }
         
-        if try await game.$users.isAttached(to: user, on: req.db) {
-            try await game.$users.detach(user, on: req.db)
+        if try await game.$usersFavorites.isAttached(to: user, on: req.db) {
+            try await game.$usersFavorites.detach(user, on: req.db)
             return .ok
         } else {
             throw Abort(.badRequest, reason: "The game is not favorited")
@@ -109,25 +136,8 @@ struct GamesController: RouteCollection {
 
         }
         
-        let games = try await user.$games
+        let games = try await user.$gamesFavorites
             .query(on: req.db)
-            .with(\.$console)
-            .with(\.$genre)
-            .all()
-        
-        return try Game.toGameResponse(games: games)
-    }
-    
-    @Sendable func searchGame(req: Request) async throws -> [Game.GameResponse] {
-        guard let gameName = req.query[String.self, at: "gameName"] else {
-                throw Abort(.badRequest, reason: "Query parameter 'gameName' is required")
-            }
-        //Esto envuelve gameName con comodines %, lo que significa que cualquier juego cuyo nombre contenga gameName será coincidente.
-        let searchPattern = "%\(gameName)%"
-
-        let games = try await Game
-            .query(on: req.db)
-            .filter(\.$name, .custom("ILIKE"), searchPattern)
             .with(\.$console)
             .with(\.$genre)
             .all()

@@ -2,7 +2,7 @@ import Foundation
 import Vapor
 import Fluent
 
-struct GameDataDTO: Codable {
+struct GameDataDTO: Content {
     let name: String
     let description: String
     let releaseDate: Date
