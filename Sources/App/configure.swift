@@ -15,6 +15,7 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(GameMigration())
     app.migrations.add(UserMigration())
     app.migrations.add(FavoriteGameMigration())
+    app.migrations.add(ReviewMigration())
     
     app.migrations.add(DataMigration())
 

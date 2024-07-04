@@ -16,6 +16,7 @@ final class User: Model, Content {
     @Timestamp(key: .createdAt, on: .create) var createdAt: Date?
     
     @Siblings(through: FavoriteGame.self, from: \.$user, to: \.$game) var gamesFavorites: [Game]
+    @Siblings(through: Review.self, from: \.$user, to: \.$game) var gamesReviews: [Game]
     
     init() {}
     

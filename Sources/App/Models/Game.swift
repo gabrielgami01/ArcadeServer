@@ -18,6 +18,7 @@ final class Game: Model, Content {
     @Parent(key: .genre) var genre: Genre
     
     @Siblings(through: FavoriteGame.self, from: \.$game, to: \.$user) var usersFavorites: [User]
+    @Siblings(through: Review.self, from: \.$game, to: \.$user) var usersReviews: [User]
     
     init() {}
     

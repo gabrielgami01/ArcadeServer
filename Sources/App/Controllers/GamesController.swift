@@ -34,7 +34,7 @@ struct GamesController: RouteCollection {
     @Sendable func searchGame(req: Request) async throws -> [Game.GameResponse] {
         guard let gameName = req.query[String.self, at: "gameName"] else {
                 throw Abort(.badRequest, reason: "Query parameter 'gameName' is required")
-            }
+        }
         //Esto envuelve gameName con comodines %, lo que significa que cualquier juego cuyo nombre contenga gameName será coincidente.
         let searchPattern = "%\(gameName)%"
 
@@ -92,7 +92,7 @@ struct GamesController: RouteCollection {
     @Sendable func addFavoriteGame(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
         
-        let gameDTO = try req.content.decode(FavoriteGameDTO.self)
+        let gameDTO = try req.content.decode(GameDTO.self)
         
         guard let game = try await Game.find(gameDTO.id, on: req.db),
               let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
@@ -107,7 +107,7 @@ struct GamesController: RouteCollection {
     @Sendable func removeFavoriteGame(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
         
-        let gameDTO = try req.content.decode(FavoriteGameDTO.self)
+        let gameDTO = try req.content.decode(GameDTO.self)
         
         guard let game = try await Game.find(gameDTO.id, on: req.db),
               let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {

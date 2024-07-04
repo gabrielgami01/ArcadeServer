@@ -1,0 +1,63 @@
+import Vapor
+import Fluent
+
+extension Review: @unchecked Sendable {}
+
+final class Review: Model, Content {
+    static let schema = "reviews"
+    
+    @ID(key: .id) var id: UUID?
+    @Field(key: .title) var title: String
+    @Field(key: .comment) var comment: String
+    @Field(key: .score) var score: Int
+    @Timestamp(key: .createdAt, on: .create) var createdAt: Date?
+    
+    @Parent(key: .game) var game: Game
+    @Parent(key: .user) var user: User
+    
+    init() {}
+    
+    init(id: UUID? = nil, title: String, comment: String, score: Int, createdAt: Date? = nil, game: Game.IDValue, user: User.IDValue) {
+        self.id = id
+        self.title = title
+        self.comment = comment
+        self.score = score
+        self.createdAt = createdAt
+        self.$game.id = game
+        self.$user.id = user
+    }
+}
+
+
+extension Review {
+    struct ReviewResponse: Content {
+        let id: UUID
+        let title: String
+        let comment: String
+        let score: Int
+        let date: Date
+        let username: String
+        let avatar: String?
+    }
+    
+    var toReviewResponse: ReviewResponse {
+        get throws {
+            try ReviewResponse(id: requireID(),
+                               title: title,
+                               comment: comment,
+                               score: score,
+                               date: createdAt ?? .distantPast,
+                               username: user.username,
+                               avatar: user.avatarURL)
+        }
+    }
+    
+    static func toReviewResponse(reviews: [Review]) throws -> [ReviewResponse] {
+        var reviewsResponse = [Review.ReviewResponse]()
+        for review in reviews {
+            let reviewResponse = try review.toReviewResponse
+            reviewsResponse.append(reviewResponse)
+        }
+        return reviewsResponse
+    }
+}
