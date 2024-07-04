@@ -8,7 +8,7 @@ final class Review: Model, Content {
     
     @ID(key: .id) var id: UUID?
     @Field(key: .title) var title: String
-    @Field(key: .comment) var comment: String
+    @Field(key: .comment) var comment: String?
     @Field(key: .rating) var rating: Int
     @Timestamp(key: .createdAt, on: .create) var createdAt: Date?
     
@@ -17,7 +17,7 @@ final class Review: Model, Content {
     
     init() {}
     
-    init(id: UUID? = nil, title: String, comment: String, rating: Int, createdAt: Date? = nil, game: Game.IDValue, user: User.IDValue) {
+    init(id: UUID? = nil, title: String, comment: String? = nil, rating: Int, createdAt: Date? = nil, game: Game.IDValue, user: User.IDValue) {
         self.id = id
         self.title = title
         self.comment = comment
@@ -33,7 +33,7 @@ extension Review {
     struct ReviewResponse: Content {
         let id: UUID
         let title: String
-        let comment: String
+        let comment: String?
         let rating: Int
         let date: Date
         let username: String
