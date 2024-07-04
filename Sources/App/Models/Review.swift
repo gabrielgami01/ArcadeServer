@@ -9,7 +9,7 @@ final class Review: Model, Content {
     @ID(key: .id) var id: UUID?
     @Field(key: .title) var title: String
     @Field(key: .comment) var comment: String
-    @Field(key: .score) var score: Int
+    @Field(key: .rating) var rating: Int
     @Timestamp(key: .createdAt, on: .create) var createdAt: Date?
     
     @Parent(key: .game) var game: Game
@@ -17,11 +17,11 @@ final class Review: Model, Content {
     
     init() {}
     
-    init(id: UUID? = nil, title: String, comment: String, score: Int, createdAt: Date? = nil, game: Game.IDValue, user: User.IDValue) {
+    init(id: UUID? = nil, title: String, comment: String, rating: Int, createdAt: Date? = nil, game: Game.IDValue, user: User.IDValue) {
         self.id = id
         self.title = title
         self.comment = comment
-        self.score = score
+        self.rating = rating
         self.createdAt = createdAt
         self.$game.id = game
         self.$user.id = user
@@ -34,7 +34,7 @@ extension Review {
         let id: UUID
         let title: String
         let comment: String
-        let score: Int
+        let rating: Int
         let date: Date
         let username: String
         let avatar: String?
@@ -45,7 +45,7 @@ extension Review {
             try ReviewResponse(id: requireID(),
                                title: title,
                                comment: comment,
-                               score: score,
+                               rating: rating,
                                date: createdAt ?? .distantPast,
                                username: user.username,
                                avatar: user.avatarURL)

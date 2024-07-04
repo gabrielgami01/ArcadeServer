@@ -7,7 +7,7 @@ struct ReviewMigration: AsyncMigration {
             .id()
             .field(.title, .string, .required)
             .field(.comment, .string, .required)
-            .field(.score, .int, .required)
+            .field(.rating, .int, .required)
             .field(.createdAt, .datetime)
             .field(.game, .uuid, .required, .references(Game.schema, .id))
             .field(.user, .uuid, .required, .references(User.schema, .id))

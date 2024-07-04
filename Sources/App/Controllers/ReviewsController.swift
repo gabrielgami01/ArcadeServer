@@ -42,7 +42,7 @@ struct ReviewsController: RouteCollection {
         try await user.$gamesReviews.attach(game, method: .ifNotExists, on: req.db) { pivot in
             pivot.title = reviewDTO.title
             pivot.comment = reviewDTO.comment
-            pivot.score = reviewDTO.score
+            pivot.rating = reviewDTO.rating
         }
         return .created
     }
