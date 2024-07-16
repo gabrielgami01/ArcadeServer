@@ -11,7 +11,7 @@ public func configure(_ app: Application) async throws {
     
     app.databases.use(try .postgres(url: "postgres://arcadeuser:arcadbpass@localhost:55000/arcadedb"), as: .psql)
 
-    app.migrations.add(MastersMigration())
+    app.migrations.add(EnumMigration())
     app.migrations.add(GameMigration())
     app.migrations.add(UserMigration())
     app.migrations.add(FavoriteGameMigration())

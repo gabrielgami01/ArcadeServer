@@ -9,28 +9,25 @@ final class Game: Model, Content {
     @ID(key: .id) var id: UUID?
     @Field(key: .name) var name: String
     @Field(key: .description) var description: String
+    @Enum(key: .console) var console: Console
+    @Enum(key: .genre) var genre: Genre
     @Field(key: .releaseDate) var releaseDate: Date
     @Field(key: .imageURL) var imageURL: String?
-    @Field(key: .videoURL) var videoURL: String?
     @Field(key: .featured) var featured: Bool
-    
-    @Parent(key: .console) var console: Console
-    @Parent(key: .genre) var genre: Genre
     
     @Siblings(through: FavoriteGame.self, from: \.$game, to: \.$user) var usersFavorites: [User]
     @Siblings(through: Review.self, from: \.$game, to: \.$user) var usersReviews: [User]
     
     init() {}
     
-    init(id: UUID? = nil, name: String, description: String, releaseDate: Date, genre: Genre.IDValue, console: Console.IDValue, imageURL: String? = nil, videoURL: String? = nil, featured: Bool) {
+    init(id: UUID? = nil, name: String, description: String, releaseDate: Date, console: Console, genre: Genre, imageURL: String? = nil, featured: Bool) {
         self.id = id
         self.name = name
         self.description = description
+        self.console = console
+        self.genre = genre
         self.releaseDate = releaseDate
-        self.$genre.id = genre
-        self.$console.id = console
         self.imageURL = imageURL
-        self.videoURL = videoURL
         self.featured = featured
     }
 }
@@ -40,25 +37,23 @@ extension Game {
         let id: UUID
         let name: String
         let description: String
-        let releaseDate: Date
-        let imageURL: String?
-        let videoURL: String?
-        let featured: Bool
         let console: String
         let genre: String
+        let releaseDate: Date
+        let imageURL: String?
+        let featured: Bool
     }
     
     var toGameResponse: GameResponse {
         get throws{
            try GameResponse(id: requireID(),
-                         name: name,
-                         description: description,
-                         releaseDate: releaseDate,
-                         imageURL: imageURL,
-                         videoURL: videoURL,
-                         featured: featured,
-                         console: console.name,
-                         genre: genre.name)
+                            name: name,
+                            description: description,
+                            console: console.rawValue,
+                            genre: genre.rawValue,
+                            releaseDate: releaseDate,
+                            imageURL: imageURL,
+                            featured: featured)
         }
     }
     

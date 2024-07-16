@@ -7,8 +7,7 @@ struct GamesController: RouteCollection {
         let games = api.grouped(UserPayload.authenticator(),
                                     UserPayload.guardMiddleware())
         games.get(use: getAllGames)
-        games.get("byConsole", ":consoleID", use: getGamesByConsole)
-        games.get("byGenre", ":genreID", use: getGamesByGenre)
+        games.get("byConsole", use: getGamesByConsole)
         games.get("featured", use: getFeaturedGames)
         games.get("search", use: searchGame)
         
@@ -21,69 +20,52 @@ struct GamesController: RouteCollection {
         favorites.get(":gameID", use: isFavoriteGame)
     }
     
-    @Sendable func getAllGames(req: Request) async throws -> [Game.GameResponse] {
-        let games = try await Game
-            .query(on: req.db)
-            .with(\.$console)
-            .with(\.$genre)
-            .all()
-        
-        return try Game.toGameResponse(games: games)
+    @Sendable func getAllGames(req: Request) async throws -> Page<Game.GameResponse> {
+        let page = try await Game.query(on: req.db)
+               .paginate(for: req)
+           
+        let gameResponses = try page.items.map { try $0.toGameResponse }
+           
+        return Page(items: gameResponses, metadata: page.metadata)
     }
     
-    @Sendable func searchGame(req: Request) async throws -> [Game.GameResponse] {
-        guard let gameName = req.query[String.self, at: "gameName"] else {
+    @Sendable func searchGame(req: Request) async throws -> Page<Game.GameResponse> {
+        guard let gameName = req.query[String.self, at: "game"] else {
                 throw Abort(.badRequest, reason: "Query parameter 'gameName' is required")
         }
         //Esto envuelve gameName con comodines %, lo que significa que cualquier juego cuyo nombre contenga gameName será coincidente.
         let searchPattern = "%\(gameName)%"
 
-        let games = try await Game
+        let page = try await Game
             .query(on: req.db)
             .filter(\.$name, .custom("ILIKE"), searchPattern)
-            .with(\.$console)
-            .with(\.$genre)
-            .all()
+            .paginate(for: req)
         
-        return try Game.toGameResponse(games: games)
+        let gameResponses = try page.items.map { try $0.toGameResponse }
+        
+        return Page(items: gameResponses, metadata: page.metadata)
     }
     
-    @Sendable func getGamesByConsole(req: Request) async throws -> [Game.GameResponse] {
-        guard let consoleID = req.parameters.get("consoleID", as: UUID.self),
-              let console = try await Console.find(consoleID, on: req.db) else {
-            throw Abort(.notFound, reason: "Console not found")
+    @Sendable func getGamesByConsole(req: Request) async throws -> Page<Game.GameResponse> {
+        guard let consoleName = req.query[String.self, at: "console"],
+              let console = Console(rawValue: consoleName) else {
+                throw Abort(.badRequest, reason: "Query parameter 'consoleName' is required")
         }
         
-        let games = try await console.$games
+        let page = try await Game
             .query(on: req.db)
-            .with(\.$console)
-            .with(\.$genre)
-            .all()
+            .filter(\.$console == console)
+            .paginate(for: req)
+           
+        let gameResponses = try page.items.map { try $0.toGameResponse }
         
-        return try Game.toGameResponse(games: games)
-    }
-    
-    @Sendable func getGamesByGenre(req: Request) async throws -> [Game.GameResponse] {
-        guard let genreID = req.parameters.get("genreID", as: UUID.self),
-              let genre = try await Genre.find(genreID, on: req.db) else {
-            throw Abort(.notFound, reason: "Genre not found")
-        }
-        
-        let games = try await genre.$games
-            .query(on: req.db)
-            .with(\.$console)
-            .with(\.$genre)
-            .all()
-        
-        return try Game.toGameResponse(games: games)
+        return Page(items: gameResponses, metadata: page.metadata)
     }
     
     @Sendable func getFeaturedGames(req: Request) async throws -> [Game.GameResponse] {
         let games = try await Game
             .query(on: req.db)
             .filter(\.$featured == true)
-            .with(\.$console)
-            .with(\.$genre)
             .all()
         
         return try Game.toGameResponse(games: games)
@@ -132,9 +114,7 @@ struct GamesController: RouteCollection {
         }
         
         let games = try await user.$gamesFavorites
-            .query(on: req.db)
-            .with(\.$console)
-            .with(\.$genre)
+            .query(on: req.db) 
             .all()
         
         return try Game.toGameResponse(games: games)
