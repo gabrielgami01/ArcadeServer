@@ -17,6 +17,7 @@ final class User: Model, Content {
     
     @Siblings(through: FavoriteGame.self, from: \.$user, to: \.$game) var gamesFavorites: [Game]
     @Siblings(through: Review.self, from: \.$user, to: \.$game) var gamesReviews: [Game]
+    @Siblings(through: Score.self, from: \.$user, to: \.$game) var gamesScores: [Game]
     
     init() {}
     

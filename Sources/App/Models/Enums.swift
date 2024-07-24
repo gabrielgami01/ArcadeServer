@@ -28,3 +28,8 @@ enum Genre: String, Codable {
     case simulation = "Simulation"
     case strategy = "Strategy"
 }
+
+enum ScoreState: String, Codable {
+    case verified
+    case unverified
+}

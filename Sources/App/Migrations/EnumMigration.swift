@@ -30,12 +30,21 @@ struct EnumMigration: AsyncMigration {
             .case("Simulation")
             .case("Strategy")
             .create()
+        
+        let _ = try await database.enum("score_states")
+            .case("verified")
+            .case("unverified")
+            .create()
     }
+    
+    
     
     func revert(on database: any Database) async throws {
         try await database.enum("console")
             .delete()
         try await database.enum("genre")
+            .delete()
+        try await database.enum("score_states")
             .delete()
     }
 }
