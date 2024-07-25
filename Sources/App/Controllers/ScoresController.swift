@@ -43,7 +43,7 @@ struct ScoresController: RouteCollection {
         let fileURL = imageDirectory.appendingPathComponent(filename)
 
         // Convierte los datos del archivo a ByteBuffer
-        let byteBuffer = ByteBuffer(data: scoreDTO.image.image)
+        let byteBuffer = ByteBuffer(data: scoreDTO.image)
 
         // Escribe los datos de la imagen al archivo
         try await req.fileio.writeFile(byteBuffer, at: fileURL.path)
