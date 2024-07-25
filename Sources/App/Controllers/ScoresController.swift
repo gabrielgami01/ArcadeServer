@@ -22,9 +22,7 @@ struct ScoresController: RouteCollection {
             throw Abort(.notFound, reason: "Game not found")
         }
                 
-        try await user.$gamesScores.attach(game, method: .always, on: req.db) { pivot in
-            pivot.score = scoreDTO.score
-        }
+        try await user.$gamesScores.attach(game, method: .always, on: req.db)
         
         let scoreID = try await user.$gamesScores
             .$pivots

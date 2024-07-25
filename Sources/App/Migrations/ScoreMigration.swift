@@ -7,7 +7,7 @@ struct ScoreMigration: AsyncMigration {
         
         try await database.schema(Score.schema)
             .id()
-            .field(.score, .int, .required)
+            .field(.score, .int)
             .field(.state, state, .required, .custom("DEFAULT 'unverified'"))
             .field(.imageURL, .string)
             .field(.createdAt, .datetime)

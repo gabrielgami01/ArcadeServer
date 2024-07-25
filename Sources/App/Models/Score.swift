@@ -7,9 +7,8 @@ final class Score: Model, Content {
     static let schema = "scores"
     
     @ID(key: .id) var id: UUID?
-    @Field(key: .score) var score: Int
+    @Field(key: .score) var score: Int?
     @Field(key: .state) var state: ScoreState
-    @Field(key: .imageURL) var imageURL: String?
     @Timestamp(key: .createdAt, on: .create) var createdAt: Date?
     
     @Parent(key: .game) var game: Game
@@ -17,11 +16,10 @@ final class Score: Model, Content {
     
     init() {}
     
-    init(id: UUID? = nil, score: Int, state: ScoreState, imageURL: String? = nil, createdAt: Date? = nil, game: Game.IDValue, user: User.IDValue) {
+    init(id: UUID? = nil, score: Int? = nil, state: ScoreState, createdAt: Date? = nil, game: Game.IDValue, user: User.IDValue) {
         self.id = id
         self.score = score
         self.state = state
-        self.imageURL = imageURL
         self.createdAt = createdAt
         self.$game.id = game
         self.$user.id = user
@@ -31,7 +29,7 @@ final class Score: Model, Content {
 extension Score {
     struct ScoreResponse: Content {
         let id: UUID
-        let score: Int
+        let score: Int?
         let state: ScoreState
         let date: Date
     }
