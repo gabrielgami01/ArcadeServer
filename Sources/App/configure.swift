@@ -9,6 +9,8 @@ import JWT
 public func configure(_ app: Application) async throws {
     app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
     
+    app.routes.defaultMaxBodySize = "10mb"
+    
     app.databases.use(try .postgres(url: "postgres://arcadeuser:arcadbpass@localhost:55000/arcadedb"), as: .psql)
 
     app.migrations.add(EnumMigration())
