@@ -1,392 +1,353 @@
 [
-    {
-      "name": "Super Mario Bros.",
-      "description": "A platform game where players control Mario and Luigi to save Princess Toadstool.",
-      "releaseDate": "1985-09-13T00:00:00Z",
-      "genre": "Platformer",
-      "console": "NES",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "The Legend of Zelda",
-      "description": "An action-adventure game featuring the hero Link on a quest to rescue Princess Zelda.",
-      "releaseDate": "1986-02-21T00:00:00Z",
-      "genre": "Adventure",
-      "console": "NES",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Sonic the Hedgehog",
-      "description": "A platform game where players control Sonic, a blue hedgehog with super speed.",
-      "releaseDate": "1991-06-23T00:00:00Z",
-      "genre": "Platformer",
-      "console": "SegaGenesis",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Street Fighter II",
-      "description": "A fighting game where players compete in martial arts battles.",
-      "releaseDate": "1991-02-06T00:00:00Z",
-      "genre": "Fighting",
-      "console": "SNES",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Final Fantasy VII",
-      "description": "An rpg game featuring Cloud Strife and his fight against the megacorporation Shinra.",
-      "releaseDate": "1997-01-31T00:00:00Z",
-      "genre": "RPG",
-      "console": "PlayStation",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Donkey Kong Country",
-      "description": "A platform game where players control Donkey Kong and Diddy Kong to recover their stolen banana hoard.",
-      "releaseDate": "1994-11-21T00:00:00Z",
-      "genre": "Platformer",
-      "console": "SNES",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Metroid",
-      "description": "An action-adventure game featuring bounty hunter Samus Aran fighting space pirates.",
-      "releaseDate": "1986-08-06T00:00:00Z",
-      "genre": "Action",
-      "console": "NES",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Pac-Man",
-      "description": "An arcade game where players control Pac-Man, navigating a maze and eating dots while avoiding ghosts.",
-      "releaseDate": "1980-05-22T00:00:00Z",
-      "genre": "Arcade",
-      "console": "Atari2600",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Tetris",
-      "description": "A puzzle game where players rotate and place falling tetrominoes to clear liNES.",
-      "releaseDate": "1984-06-06T00:00:00Z",
-      "genre": "Puzzle",
-      "console": "Arcade",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Mega Man 2",
-      "description": "An action-platformer game where players control Mega Man to defeat Dr. Wily.",
-      "releaseDate": "1988-12-24T00:00:00Z",
-      "genre": "Action",
-      "console": "NES",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Castlevania",
-      "description": "An action-adventure game where players control Simon Belmont on a quest to defeat Dracula.",
-      "releaseDate": "1986-09-26T00:00:00Z",
-      "genre": "Action",
-      "console": "NES",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Mortal Kombat",
-      "description": "A fighting game known for its brutal finishing moves and diverse characters.",
-      "releaseDate": "1992-10-08T00:00:00Z",
-      "genre": "Fighting",
-      "console": "SegaGenesis",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": true
-    },
-    {
-      "name": "GoldenEye 007",
-      "description": "A first-person shooter game based on the James Bond film of the same name.",
-      "releaseDate": "1997-08-25T00:00:00Z",
-      "genre": "Shooter",
-      "console": "N64",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Star Fox",
-      "description": "A 3D rail shooter game featuring the Star Fox team defending the Lylat system.",
-      "releaseDate": "1993-02-21T00:00:00Z",
-      "genre": "Shooter",
-      "console": "SNES",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Resident Evil",
-      "description": "A survival horror game where players explore a mansion filled with zombies.",
-      "releaseDate": "1996-03-22T00:00:00Z",
-      "genre": "Action",
-      "console": "PlayStation",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Crash Bandicoot",
-      "description": "A platform game where players control Crash Bandicoot to stop Dr. Neo Cortex.",
-      "releaseDate": "1996-09-09T00:00:00Z",
-      "genre": "Platformer",
-      "console": "PlayStation",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Pokémon Red and Blue",
-      "description": "An rpg game where players capture and train Pokémon to become the Pokémon Champion.",
-      "releaseDate": "1996-02-27T00:00:00Z",
-      "genre": "RPG",
-      "console": "Gameboy",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "EarthBound",
-      "description": "An rpg game following NESs and his friends on a quest to save the world from Giygas.",
-      "releaseDate": "1994-08-27T00:00:00Z",
-      "genre": "RPG",
-      "console": "SNES",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Banjo-Kazooie",
-      "description": "A platform game where players control Banjo and Kazooie to stop the witch Gruntilda.",
-      "releaseDate": "1998-06-29T00:00:00Z",
-      "genre": "Platformer",
-      "console": "N64",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Spyro the Dragon",
-      "description": "A platform game where players control Spyro, a young dragon, on a quest to rescue his fellow dragons.",
-      "releaseDate": "1998-09-10T00:00:00Z",
-      "genre": "Platformer",
-      "console": "PlayStation",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "F-Zero",
-      "description": "A futuristic racing game where players compete in high-speed hovercraft races.",
-      "releaseDate": "1990-11-21T00:00:00Z",
-      "genre": "Racing",
-      "console": "SNES",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Chrono Trigger",
-      "description": "An rpg game where players travel through time to prevent a global catastrophe.",
-      "releaseDate": "1995-03-11T00:00:00Z",
-      "genre": "RPG",
-      "console": "SNES",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Kirby’s adventure",
-      "description": "A platform game where players control Kirby to recover the Star Rod and restore dreams.",
-      "releaseDate": "1993-03-23T00:00:00Z",
-      "genre": "Platformer",
-      "console": "NES",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Super Metroid",
-      "description": "An action-adventure game featuring Samus Aran as she explores the planet Zebes.",
-      "releaseDate": "1994-03-19T00:00:00Z",
-      "genre": "Action",
-      "console": "SNES",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Zelda: Ocarina of Time",
-      "description": "An action-adventure game where Link travels through time to stop Ganondorf.",
-      "releaseDate": "1998-11-21T00:00:00Z",
-      "genre": "Adventure",
-      "console": "N64",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": true
-    },
-    {
-      "name": "Contra",
-      "description": "A run-and-gun action game where players control soldiers fighting against alien invaders.",
-      "releaseDate": "1987-02-20T00:00:00Z",
-      "genre": "Shooter",
-      "console": "NES",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "StarCraft",
-      "description": "A real-time strategy game where players control one of three species in a war for dominance.",
-      "releaseDate": "1998-03-31T00:00:00Z",
-      "genre": "Strategy",
-      "console": "PlayStation",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": true
-    },
-    {
-      "name": "SimCity",
-      "description": "A simulation game where players build and manage a city.",
-      "releaseDate": "1989-02-02T00:00:00Z",
-      "genre": "Simulation",
-      "console": "SNES",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Duck Hunt",
-      "description": "A light gun shooter game where players use the NES Zapper to shoot ducks.",
-      "releaseDate": "1984-04-21T00:00:00Z",
-      "genre": "Shooter",
-      "console": "NES",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "NBA Jam",
-      "description": "A sports game known for its over-the-top basketball action and catchphrases.",
-      "releaseDate": "1993-03-04T00:00:00Z",
-      "genre": "Sports",
-      "console": "SegaGenesis",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Galaga",
-      "description": "An arcade shooter game where players control a spaceship and shoot down enemy aliens.",
-      "releaseDate": "1981-09-25T00:00:00Z",
-      "genre": "Arcade",
-      "console": "Atari2600",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": true
-    },
-    {
-      "name": "Frogger",
-      "description": "An arcade game where players guide a frog across a busy road and river to safety.",
-      "releaseDate": "1981-06-05T00:00:00Z",
-      "genre": "Arcade",
-      "console": "Atari2600",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Metal Gear Solid",
-      "description": "An action-adventure stealth game where players control Solid Snake to prevent a nuclear disaster.",
-      "releaseDate": "1998-09-03T00:00:00Z",
-      "genre": "Action",
-      "console": "PlayStation",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Gran Turismo",
-      "description": "A racing simulation game known for its realistic graphics and driving physics.",
-      "releaseDate": "1997-12-23T00:00:00Z",
-      "genre": "Racing",
-      "console": "PlayStation",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Shenmue",
-      "description": "An action-adventure game with open-world exploration and real-time combat.",
-      "releaseDate": "1999-12-29T00:00:00Z",
-      "genre": "Adventure",
-      "console": "Dreamcast",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "SoulCalibur",
-      "description": "A fighting game with weapon-based combat and a variety of characters.",
-      "releaseDate": "1998-08-30T00:00:00Z",
-      "genre": "Fighting",
-      "console": "Dreamcast",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "The Sims",
-      "description": "A life simulation game where players create and control people in a virtual world.",
-      "releaseDate": "2000-02-04T00:00:00Z",
-      "genre": "Simulation",
-      "console": "PlayStation",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Super Smash Bros.",
-      "description": "A fighting game where characters from various Nintendo franchises battle it out.",
-      "releaseDate": "1999-01-2T00:00:00Z",
-      "genre": "Fighting",
-      "console": "N64",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": false
-    },
-    {
-      "name": "Mario Kart 64",
-      "description": "A racing game where characters from the Mario universe race in go-karts.",
-      "releaseDate": "1996-12-14T00:00:00Z",
-      "genre": "Racing",
-      "console": "N64",
-      "imageURL": null,
-      "videoURL": null,
-      "featured": true
-    }
+  {
+    "id": "373c6689-5674-45ba-b82f-3ff64622dd8c",
+    "name": "Super Mario Bros.",
+    "description": "A platform game where players control Mario and Luigi to save Princess Toadstool.",
+    "releaseDate": "1985-09-13T00:00:00Z",
+    "genre": "Platformer",
+    "console": "NES",
+    "featured": false
+  },
+  {
+    "id": "11d4a11a-d788-4f98-b9d3-ff134c581c4b",
+    "name": "The Legend of Zelda",
+    "description": "An action-adventure game featuring the hero Link on a quest to rescue Princess Zelda.",
+    "releaseDate": "1986-02-21T00:00:00Z",
+    "genre": "Adventure",
+    "console": "NES",
+    "featured": false
+  },
+  {
+    "id": "b63ccff0-49f0-43ac-8d4f-0eec27f4493b",
+    "name": "Sonic the Hedgehog",
+    "description": "A platform game where players control Sonic, a blue hedgehog with super speed.",
+    "releaseDate": "1991-06-23T00:00:00Z",
+    "genre": "Platformer",
+    "console": "SegaGenesis",
+    "featured": false
+  },
+  {
+    "id": "5c757595-f6d8-4bfa-8986-89ed6e0f7d05",
+    "name": "Street Fighter II",
+    "description": "A fighting game where players compete in martial arts battles.",
+    "releaseDate": "1991-02-06T00:00:00Z",
+    "genre": "Fighting",
+    "console": "SNES",
+    "featured": false
+  },
+  {
+    "id": "de5c15a0-6ba3-491b-9253-9a35477a623c",
+    "name": "Final Fantasy VII",
+    "description": "An rpg game featuring Cloud Strife and his fight against the megacorporation Shinra.",
+    "releaseDate": "1997-01-31T00:00:00Z",
+    "genre": "RPG",
+    "console": "PlayStation",
+    "featured": false
+  },
+  {
+    "id": "42fba371-9837-4cc7-a0d5-854257cc2ad0",
+    "name": "Donkey Kong Country",
+    "description": "A platform game where players control Donkey Kong and Diddy Kong to recover their stolen banana hoard.",
+    "releaseDate": "1994-11-21T00:00:00Z",
+    "genre": "Platformer",
+    "console": "SNES",
+    "featured": false
+  },
+  {
+    "id": "f461ba5e-c572-4e2f-b661-23b90b1fb10c",
+    "name": "Metroid",
+    "description": "An action-adventure game featuring bounty hunter Samus Aran fighting space pirates.",
+    "releaseDate": "1986-08-06T00:00:00Z",
+    "genre": "Action",
+    "console": "NES",
+    "featured": false
+  },
+  {
+    "id": "b0dc39fe-3b11-44cb-b0d6-d7600a9f091b",
+    "name": "Pac-Man",
+    "description": "An arcade game where players control Pac-Man, navigating a maze and eating dots while avoiding ghosts.",
+    "releaseDate": "1980-05-22T00:00:00Z",
+    "genre": "Arcade",
+    "console": "Atari2600",
+    "featured": false
+  },
+  {
+    "id": "3a2b2a9b-49e6-4a20-9ffb-7fe352e7e461",
+    "name": "Tetris",
+    "description": "A puzzle game where players rotate and place falling tetrominoes to clear liNES.",
+    "releaseDate": "1984-06-06T00:00:00Z",
+    "genre": "Puzzle",
+    "console": "NES",
+    "featured": false
+  },
+  {
+    "id": "669f3476-a4b5-4c74-91d0-120ba6f99872",
+    "name": "Mega Man 2",
+    "description": "An action-platformer game where players control Mega Man to defeat Dr. Wily.",
+    "releaseDate": "1988-12-24T00:00:00Z",
+    "genre": "Action",
+    "console": "NES",
+    "featured": false
+  },
+  {
+    "id": "cc8c56f9-274d-4896-b452-7f92841d3005",
+    "name": "Castlevania",
+    "description": "An action-adventure game where players control Simon Belmont on a quest to defeat Dracula.",
+    "releaseDate": "1986-09-26T00:00:00Z",
+    "genre": "Action",
+    "console": "NES",
+    "featured": false
+  },
+  {
+    "id": "cf20c5f6-8834-4294-91e8-945775484b99",
+    "name": "Mortal Kombat",
+    "description": "A fighting game known for its brutal finishing moves and diverse characters.",
+    "releaseDate": "1992-10-08T00:00:00Z",
+    "genre": "Fighting",
+    "console": "SegaGenesis",
+    "featured": true
+  },
+  {
+    "id": "931e9096-5810-4868-ab23-00ca03c3883f",
+    "name": "GoldenEye 007",
+    "description": "A first-person shooter game based on the James Bond film of the same name.",
+    "releaseDate": "1997-08-25T00:00:00Z",
+    "genre": "Shooter",
+    "console": "N64",
+    "featured": false
+  },
+  {
+    "id": "009f878d-612d-4098-891d-f2cc5a893a62",
+    "name": "Star Fox",
+    "description": "A 3D rail shooter game featuring the Star Fox team defending the Lylat system.",
+    "releaseDate": "1993-02-21T00:00:00Z",
+    "genre": "Shooter",
+    "console": "SNES",
+    "featured": false
+  },
+  {
+    "id": "19016a6f-b4b1-441c-8aca-8f84b9f52457",
+    "name": "Resident Evil",
+    "description": "A survival horror game where players explore a mansion filled with zombies.",
+    "releaseDate": "1996-03-22T00:00:00Z",
+    "genre": "Action",
+    "console": "PlayStation",
+    "featured": false
+  },
+  {
+    "id": "feb9dcae-a88f-4824-bf3c-5ea5a4bbb25c",
+    "name": "Crash Bandicoot",
+    "description": "A platform game where players control Crash Bandicoot to stop Dr. Neo Cortex.",
+    "releaseDate": "1996-09-09T00:00:00Z",
+    "genre": "Platformer",
+    "console": "PlayStation",
+    "featured": false
+  },
+  {
+    "id": "f29eac70-e200-4e54-b878-efcdaa9413e3",
+    "name": "Pokémon Red and Blue",
+    "description": "An rpg game where players capture and train Pokémon to become the Pokémon Champion.",
+    "releaseDate": "1996-02-27T00:00:00Z",
+    "genre": "RPG",
+    "console": "Gameboy",
+    "featured": false
+  },
+  {
+    "id": "373f6b0e-771c-4228-92a5-94fb11be2871",
+    "name": "EarthBound",
+    "description": "An rpg game following NESs and his friends on a quest to save the world from Giygas.",
+    "releaseDate": "1994-08-27T00:00:00Z",
+    "genre": "RPG",
+    "console": "SNES",
+    "featured": false
+  },
+  {
+    "id": "bab5dcea-355f-4c70-a9a4-ac274f937541",
+    "name": "Banjo-Kazooie",
+    "description": "A platform game where players control Banjo and Kazooie to stop the witch Gruntilda.",
+    "releaseDate": "1998-06-29T00:00:00Z",
+    "genre": "Platformer",
+    "console": "N64",
+    "featured": false
+  },
+  {
+    "id": "ed8b1946-8112-4694-b1e7-0c3ee07a7f3d",
+    "name": "Spyro the Dragon",
+    "description": "A platform game where players control Spyro, a young dragon, on a quest to rescue his fellow dragons.",
+    "releaseDate": "1998-09-10T00:00:00Z",
+    "genre": "Platformer",
+    "console": "PlayStation",
+    "featured": false
+  },
+  {
+    "id": "6416cb0b-7149-47eb-9b7c-e4e507cd5719",
+    "name": "F-Zero",
+    "description": "A futuristic racing game where players compete in high-speed hovercraft races.",
+    "releaseDate": "1990-11-21T00:00:00Z",
+    "genre": "Racing",
+    "console": "SNES",
+    "featured": false
+  },
+  {
+    "id": "006b912e-ac61-4245-ad22-bbbed431fc70",
+    "name": "Chrono Trigger",
+    "description": "An rpg game where players travel through time to prevent a global catastrophe.",
+    "releaseDate": "1995-03-11T00:00:00Z",
+    "genre": "RPG",
+    "console": "SNES",
+    "featured": false
+  },
+  {
+    "id": "b2f6ba9f-c594-4e0b-b04e-b1e4da578c6d",
+    "name": "Kirby’s adventure",
+    "description": "A platform game where players control Kirby to recover the Star Rod and restore dreams.",
+    "releaseDate": "1993-03-23T00:00:00Z",
+    "genre": "Platformer",
+    "console": "NES",
+    "featured": false
+  },
+  {
+    "id": "e023342d-777f-4132-8e02-b927bfad19ef",
+    "name": "Super Metroid",
+    "description": "An action-adventure game featuring Samus Aran as she explores the planet Zebes.",
+    "releaseDate": "1994-03-19T00:00:00Z",
+    "genre": "Action",
+    "console": "SNES",
+    "featured": false
+  },
+  {
+    "id": "55d4b0ef-6e80-40af-9fbe-d6a02b843dea",
+    "name": "Zelda: Ocarina of Time",
+    "description": "An action-adventure game where Link travels through time to stop Ganondorf.",
+    "releaseDate": "1998-11-21T00:00:00Z",
+    "genre": "Adventure",
+    "console": "N64",
+    "featured": true
+  },
+  {
+    "id": "1f37a5d0-bc9d-4589-b6e9-7ce82e01d9d0",
+    "name": "Contra",
+    "description": "A run-and-gun action game where players control soldiers fighting against alien invaders.",
+    "releaseDate": "1987-02-20T00:00:00Z",
+    "genre": "Shooter",
+    "console": "NES",
+    "featured": false
+  },
+  {
+    "id": "27cd3c47-7954-49da-ae14-be5d845a39bd",
+    "name": "StarCraft",
+    "description": "A real-time strategy game where players control one of three species in a war for dominance.",
+    "releaseDate": "1998-03-31T00:00:00Z",
+    "genre": "Strategy",
+    "console": "PlayStation",
+    "featured": true
+  },
+  {
+    "id": "1840c662-7764-4f18-a073-98ccbee8e7b7",
+    "name": "SimCity",
+    "description": "A simulation game where players build and manage a city.",
+    "releaseDate": "1989-02-02T00:00:00Z",
+    "genre": "Simulation",
+    "console": "SNES",
+    "featured": false
+  },
+  {
+    "id": "400e5004-0f25-4e4a-9597-66f60295be9d",
+    "name": "Duck Hunt",
+    "description": "A light gun shooter game where players use the NES Zapper to shoot ducks.",
+    "releaseDate": "1984-04-21T00:00:00Z",
+    "genre": "Shooter",
+    "console": "NES",
+    "featured": false
+  },
+  {
+    "id": "dc3f89c8-3100-4b96-b233-fcaef003e944",
+    "name": "NBA Jam",
+    "description": "A sports game known for its over-the-top basketball action and catchphrases.",
+    "releaseDate": "1993-03-04T00:00:00Z",
+    "genre": "Sports",
+    "console": "SegaGenesis",
+    "featured": false
+  },
+  {
+    "id": "4b3a1312-2b3e-4cf5-ad16-d16c1c8210d6",
+    "name": "Galaga",
+    "description": "An arcade shooter game where players control a spaceship and shoot down enemy aliens.",
+    "releaseDate": "1981-09-25T00:00:00Z",
+    "genre": "Arcade",
+    "console": "Atari2600",
+    "featured": true
+  },
+  {
+    "id": "5158bfb4-7d1b-438c-93ff-569837a54d6b",
+    "name": "Frogger",
+    "description": "An arcade game where players guide a frog across a busy road and river to safety.",
+    "releaseDate": "1981-06-05T00:00:00Z",
+    "genre": "Arcade",
+    "console": "Atari2600",
+    "featured": false
+  },
+  {
+    "id": "1956c024-94e4-439e-94f0-74b0b2fcc168",
+    "name": "Metal Gear Solid",
+    "description": "An action-adventure stealth game where players control Solid Snake to prevent a nuclear disaster.",
+    "releaseDate": "1998-09-03T00:00:00Z",
+    "genre": "Action",
+    "console": "PlayStation",
+    "featured": false
+  },
+  {
+    "id": "e34a3c8b-040b-4117-bbf9-cabd0dc2ecad",
+    "name": "Gran Turismo",
+    "description": "A racing simulation game known for its realistic graphics and driving physics.",
+    "releaseDate": "1997-12-23T00:00:00Z",
+    "genre": "Racing",
+    "console": "PlayStation",
+    "featured": false
+  },
+  {
+    "id": "e2f7c08c-2e74-4396-b56d-55b9a6d817eb",
+    "name": "Shenmue",
+    "description": "An action-adventure game with open-world exploration and real-time combat.",
+    "releaseDate": "1999-12-29T00:00:00Z",
+    "genre": "Adventure",
+    "console": "Dreamcast",
+    "featured": false
+  },
+  {
+    "id": "f1028d15-0830-4394-9315-b1c0b4b6ee07",
+    "name": "SoulCalibur",
+    "description": "A fighting game with weapon-based combat and a variety of characters.",
+    "releaseDate": "1998-08-30T00:00:00Z",
+    "genre": "Fighting",
+    "console": "Dreamcast",
+    "featured": false
+  },
+  {
+    "id": "e834a771-9525-4bd3-9385-f15a83eef08f",
+    "name": "The Sims",
+    "description": "A life simulation game where players create and control people in a virtual world.",
+    "releaseDate": "2000-02-04T00:00:00Z",
+    "genre": "Simulation",
+    "console": "PlayStation",
+    "featured": false
+  },
+  {
+    "id": "3b07db2c-5e04-40de-9c97-224256418447",
+    "name": "Super Smash Bros.",
+    "description": "A fighting game where characters from various Nintendo franchises battle it out.",
+    "releaseDate": "1999-01-2T00:00:00Z",
+    "genre": "Fighting",
+    "console": "N64",
+    "featured": false
+  },
+  {
+    "id": "7c094306-2b16-4b78-8398-650d58373728",
+    "name": "Mario Kart 64",
+    "description": "A racing game where characters from the Mario universe race in go-karts.",
+    "releaseDate": "1996-12-14T00:00:00Z",
+    "genre": "Racing",
+    "console": "N64",
+    "featured": true
+  }
 ]

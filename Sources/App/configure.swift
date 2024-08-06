@@ -19,9 +19,10 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(FavoriteGameMigration())
     app.migrations.add(ReviewMigration())
     app.migrations.add(ScoreMigration())
+    app.migrations.add(ChallengeMigration())
     
     app.migrations.add(DataMigration())
-
+    
     app.views.use(.leaf)
 
     try routes(app)

@@ -8,6 +8,7 @@ extension FieldKey {
     static let imageURL = FieldKey("image_url")
     static let date = FieldKey("date")
     static let state = FieldKey("state")
+    static let type = FieldKey("type")
     
     //Model
     static let game = FieldKey("game")
@@ -31,8 +32,6 @@ extension FieldKey {
     
     //Challenge
     static let targetScore = FieldKey("target_score")
-    static let startDate = FieldKey("start_date")
-    static let endDate = FieldKey("end_date")
     
     //Score
     static let score = FieldKey("score")

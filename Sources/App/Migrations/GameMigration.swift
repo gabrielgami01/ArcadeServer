@@ -13,7 +13,6 @@ struct GameMigration: AsyncMigration {
             .field(.console, console, .required, .custom("DEFAULT 'Arcade'"))
             .field(.genre, genre, .required, .custom("DEFAULT 'Arcade'"))
             .field(.releaseDate, .date, .required)
-            .field(.imageURL, .string)
             .field(.featured, .bool, .required)
             .create()
     }

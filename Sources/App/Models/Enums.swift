@@ -2,7 +2,6 @@ import Vapor
 import Fluent
 
 enum Console: String, Codable {
-    case arcade = "Arcade"
     case nes = "NES"
     case snes = "SNES"
     case segagenesis = "SegaGenesis"
@@ -32,4 +31,10 @@ enum Genre: String, Codable {
 enum ScoreState: String, Codable {
     case verified
     case unverified
+}
+
+enum ChallengeType: String, Codable {
+    case gold
+    case silver
+    case bronze
 }

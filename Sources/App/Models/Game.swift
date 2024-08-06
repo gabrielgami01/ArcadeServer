@@ -12,8 +12,9 @@ final class Game: Model, Content {
     @Enum(key: .console) var console: Console
     @Enum(key: .genre) var genre: Genre
     @Field(key: .releaseDate) var releaseDate: Date
-    @Field(key: .imageURL) var imageURL: String?
     @Field(key: .featured) var featured: Bool
+    
+    @Children(for: \.$game) var challenges: [Challenge]
     
     @Siblings(through: FavoriteGame.self, from: \.$game, to: \.$user) var usersFavorites: [User]
     @Siblings(through: Review.self, from: \.$game, to: \.$user) var usersReviews: [User]
@@ -21,14 +22,13 @@ final class Game: Model, Content {
     
     init() {}
     
-    init(id: UUID? = nil, name: String, description: String, releaseDate: Date, console: Console, genre: Genre, imageURL: String? = nil, featured: Bool) {
+    init(id: UUID? = nil, name: String, description: String, releaseDate: Date, console: Console, genre: Genre, featured: Bool) {
         self.id = id
         self.name = name
         self.description = description
         self.console = console
         self.genre = genre
         self.releaseDate = releaseDate
-        self.imageURL = imageURL
         self.featured = featured
     }
 }
@@ -41,7 +41,6 @@ extension Game {
         let console: String
         let genre: String
         let releaseDate: Date
-        let imageURL: String?
         let featured: Bool
     }
     
@@ -53,7 +52,6 @@ extension Game {
                             console: console.rawValue,
                             genre: genre.rawValue,
                             releaseDate: releaseDate,
-                            imageURL: imageURL,
                             featured: featured)
         }
     }
