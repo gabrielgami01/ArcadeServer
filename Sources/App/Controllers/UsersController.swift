@@ -25,7 +25,9 @@ struct UsersController: RouteCollection {
         
         let jwtSecure = api.grouped(UserPayload.authenticator(),
                                     UserPayload.guardMiddleware())
-        jwtSecure.get("testJWT", use: testUserJWT)
+        jwtSecure.get("refreshJWT", use: refreshJWT)
+        jwtSecure.get("userInfo", use: getUserInfo)
+        jwtSecure.put("updateAbout", use: updateUserAbout)
     }
     
     @Sendable func createUser(req: Request) async throws -> HTTPStatus {
@@ -47,14 +49,42 @@ struct UsersController: RouteCollection {
         return .created
     }
     
-    @Sendable func loginJWT(req: Request) async throws -> TokenDTO {
+    @Sendable func loginJWT(req: Request) async throws -> LoginDTO {
         let user = try req.auth.require(User.self)
-        let token = try TokenDTO(token: generateJWT(req: req, subject: user.requireID().uuidString))
-        return token
+        let token = try generateJWT(req: req, subject: user.requireID().uuidString)
+        return LoginDTO(token: token, user: user.toUserDTO)
     }
     
-    @Sendable func testUserJWT(req: Request) async throws -> HTTPStatus {
-        let _ = try req.auth.require(UserPayload.self)
+    @Sendable func refreshJWT(req: Request) async throws -> LoginDTO {
+        let payload = try req.auth.require(UserPayload.self)
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+            throw Abort(.notFound, reason: "User not found")
+        }
+        
+        let token = try generateJWT(req: req, subject: user.requireID().uuidString)
+        return LoginDTO(token: token, user: user.toUserDTO)
+    }
+    
+    @Sendable func getUserInfo(req: Request) async throws -> UserDTO {
+        let payload = try req.auth.require(UserPayload.self)
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+            throw Abort(.notFound, reason: "User not found")
+        }
+        
+        let userDTO = user.toUserDTO
+        return userDTO
+    }
+    
+    @Sendable func updateUserAbout(req: Request) async throws -> HTTPStatus {
+        let payload = try req.auth.require(UserPayload.self)
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+            throw Abort(.notFound, reason: "User not found")
+        }
+        
+        let about = try req.content.decode(EditUserAboutDTO.self)
+        
+        user.biography = about.about
+        try await user.update(on: req.db)
         return .ok
     }
 }
