@@ -2,7 +2,7 @@ import Vapor
 import Fluent
 
 struct UserDTO: Content {
-    let id: UUID?
+    let id: UUID
     let email: String
     let username: String
     let fullName: String
@@ -20,7 +20,7 @@ struct EditUserAboutDTO: Content {
  
 extension User {
     var toUserDTO: UserDTO {
-        UserDTO(id: id,
+        UserDTO(id: id ?? UUID(),
                 email: email,
                 username: username,
                 fullName: fullName,
