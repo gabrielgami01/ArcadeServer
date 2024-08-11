@@ -4,10 +4,15 @@ import FluentPostgresDriver
 import Leaf
 import Vapor
 import JWT
+import Queues
+import QueuesRedisDriver
+
 
 // configures your application
 public func configure(_ app: Application) async throws {
     app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
+    
+//    app.logger.logLevel = .debug
     
     app.routes.defaultMaxBodySize = "10mb"
     
@@ -20,12 +25,25 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(ReviewMigration())
     app.migrations.add(ScoreMigration())
     app.migrations.add(ChallengeMigration())
+    app.migrations.add(UserChallengeMigration())
     
     app.migrations.add(DataMigration())
     
     app.views.use(.leaf)
 
     try routes(app)
+    
+    let pool = RedisConfiguration.PoolOptions(maximumConnectionCount: .maximumActiveConnections(15),
+                                              connectionRetryTimeout: .milliseconds(500))
+    let redisConfig = try RedisConfiguration(url: "redis://127.0.0.1:6379", pool: pool)
+    app.redis.configuration = redisConfig
+    app.queues.use(.redis(redisConfig))
+    
+    app.queues.schedule(CheckChallengeJob())
+        .hourly()
+        .at(0)
+    
+    try app.queues.startScheduledJobs()
     
     let key = try SecurityManager().key
     app.jwt.signers.use(.hs256(key: key), kid: "symmetric", isDefault: true)

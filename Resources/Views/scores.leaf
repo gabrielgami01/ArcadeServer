@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>#(title)</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <h1 class="display-2">#(title)</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Game</th>
+                <th scope="col">User</th>
+                <th scope="col">Image</th>
+                <th scope="col">Score</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            #for(score in scores):
+            <tr>
+                <td>#(score.game)</td>
+                <td>#(score.user)</td>
+                <td>
+                    #if(score.imageURL):
+                    <img src="#(score.imageURL)" alt="Score Image" width="300" height="300">
+                    #else:
+                    No image available
+                    #endif
+                </td>
+                <td>
+                    <form action="/scores/update" method="post">
+                        <input type="hidden" name="id" value="#(score.id)">
+                        <input type="number" name="score" value="#(score.score)" min="0" required>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </td>
+            </tr>
+            #endfor
+        </tbody>
+    </table>
+</body>
+</html>

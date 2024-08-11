@@ -14,6 +14,8 @@ final class Challenge: Model, Content {
     
     @Parent(key: .game) var game: Game
     
+    @Siblings(through: UserChallenges.self, from: \.$challenge, to: \.$user) var users: [User]
+    
     init() {}
     
     init(id: UUID? = nil, name: String, description: String, targetScore: Int, type: ChallengeType, game: Game.IDValue) {

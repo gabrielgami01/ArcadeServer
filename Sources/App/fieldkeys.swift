@@ -31,10 +31,12 @@ extension FieldKey {
     static let createdAt = FieldKey("created_at")
     
     //Challenge
+    static let challenge = FieldKey("challenge")
     static let targetScore = FieldKey("target_score")
     
     //Score
     static let score = FieldKey("score")
+    static let reviewed = FieldKey("reviewed")
     
     //Review
     static let title = FieldKey("title")

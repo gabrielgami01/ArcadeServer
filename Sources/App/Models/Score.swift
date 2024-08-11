@@ -8,7 +8,8 @@ final class Score: Model, Content {
     
     @ID(key: .id) var id: UUID?
     @Field(key: .score) var score: Int?
-    @Field(key: .state) var state: ScoreState
+    @Enum(key: .state) var state: ScoreState
+    @Field(key: .reviewed) var reviewed: Bool
     @Timestamp(key: .createdAt, on: .create) var createdAt: Date?
     
     @Parent(key: .game) var game: Game
@@ -16,10 +17,11 @@ final class Score: Model, Content {
     
     init() {}
     
-    init(id: UUID? = nil, score: Int? = nil, state: ScoreState, createdAt: Date? = nil, game: Game.IDValue, user: User.IDValue) {
+    init(id: UUID? = nil, score: Int? = nil, state: ScoreState, reviewed: Bool = false, createdAt: Date? = nil, game: Game.IDValue, user: User.IDValue) {
         self.id = id
         self.score = score
         self.state = state
+        self.reviewed = reviewed
         self.createdAt = createdAt
         self.$game.id = game
         self.$user.id = user
@@ -52,5 +54,25 @@ extension Score {
         }
         return scoresResponse
     }
+    
+    struct ScoreView: Content {
+        let id: UUID
+        let game: String
+        let user: String
+        let imageURL: String
+    }
+    
+    var toScoreView: ScoreView {
+        get throws {
+            let imageURL = "http://localhost:8080/scores/\(try requireID()).jpg"
+            print(imageURL)
+            return ScoreView(id: try requireID(),
+                      game: game.name,
+                      user: user.username,
+                      imageURL: imageURL
+            )
+        }
+    }
+    
 }
 

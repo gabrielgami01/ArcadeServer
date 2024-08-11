@@ -9,7 +9,7 @@ struct ScoreMigration: AsyncMigration {
             .id()
             .field(.score, .int)
             .field(.state, state, .required, .custom("DEFAULT 'unverified'"))
-            .field(.imageURL, .string)
+            .field(.reviewed, .bool, .required, .custom("DEFAULT 'false'"))
             .field(.createdAt, .datetime)
             .field(.game, .uuid, .required, .references(Game.schema, .id))
             .field(.user, .uuid, .required, .references(User.schema, .id))
