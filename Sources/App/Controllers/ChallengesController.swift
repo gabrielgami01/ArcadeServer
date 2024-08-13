@@ -4,10 +4,11 @@ import Vapor
 struct ChallengesController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let api = routes.grouped("api", "challenges")
-        let scores = api.grouped(UserPayload.authenticator(),
+        let challenges = api.grouped(UserPayload.authenticator(),
                                     UserPayload.guardMiddleware())
-        scores.get(use: getAllChallenges)
-        scores.get("byType", use: getChallengesByType)
+        challenges.get(use: getAllChallenges)
+        challenges.get("byType", use: getChallengesByType)
+        challenges.get(":challengeID", use: isChallengeCompleted)
     }
     
     @Sendable func getAllChallenges(req: Request) async throws -> Page<Challenge.ChallengeResponse> {
@@ -40,6 +41,22 @@ struct ChallengesController: RouteCollection {
         let challengesResponses = try page.items.map { try $0.toChallengeResponse }
         
         return Page(items: challengesResponses, metadata: page.metadata)
+    }
+    
+    @Sendable func isChallengeCompleted(req: Request) async throws -> Bool {
+        let payload = try req.auth.require(UserPayload.self)
+        
+        guard let challengeID = req.parameters.get("challengeID", as: UUID.self),
+              let challenge = try await Challenge.find(challengeID, on: req.db),
+              let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+            throw Abort(.notFound, reason: "Challenge not found")
+        }
+        
+        return if try await challenge.$users.isAttached(to: user, on: req.db) {
+            true
+        } else {
+            false
+        }
     }
     
     
