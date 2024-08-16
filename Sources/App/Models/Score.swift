@@ -74,5 +74,31 @@ extension Score {
         }
     }
     
+    struct RankingScore: Content {
+        let id: UUID
+        let score: Int
+        let date: Date
+        let user: String
+    }
+    
+    var toRankingScore: RankingScore {
+        get throws {
+            try RankingScore(id: requireID(),
+                             score: score ?? 0,
+                             date: createdAt ?? .distantPast,
+                             user: user.username
+            )
+        }
+    }
+    
+    static func toRankingScore(scores: [Score]) throws -> [RankingScore] {
+        var rankingScores = [Score.RankingScore]()
+        for score in scores {
+            let rankingScore = try score.toRankingScore
+            rankingScores.append(rankingScore)
+        }
+        return rankingScores
+    }
+    
 }
 

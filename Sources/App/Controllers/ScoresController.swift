@@ -50,14 +50,18 @@ struct ScoresController: RouteCollection {
     }
     
     @Sendable func getGameScores(req: Request) async throws -> [Score.ScoreResponse] {
+        let payload = try req.auth.require(UserPayload.self)
+        
         guard let gameID = req.parameters.get("gameID", as: UUID.self),
-              let game = try await Game.find(gameID, on: req.db) else {
+              let game = try await Game.find(gameID, on: req.db),
+              let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
             throw Abort(.notFound, reason: "Game not found")
         }
         
-        let scores = try await game.$usersScores
+        let scores = try await user.$gamesScores
             .$pivots
             .query(on: req.db)
+            .filter(\.$game.$id == game.requireID())
             .all()
         
         return try Score.toScoreResponse(scores: scores)
