@@ -27,11 +27,10 @@ struct ReviewsController: RouteCollection {
     
     @Sendable func addReview(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
-        
         let reviewDTO = try req.content.decode(CreateReviewDTO.self)
         
-        guard let game = try await Game.find(reviewDTO.gameID, on: req.db),
-              let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
+              let game = try await Game.find(reviewDTO.gameID, on: req.db) else {
             throw Abort(.notFound, reason: "Game not found")
         }
                 

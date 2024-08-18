@@ -23,8 +23,7 @@ struct RankingsController: RouteCollection {
             .filter(\.$state == .verified)
             .sort(.score)
             .paginate(for: req)
-        
-        let rankingScoreResponse = try page.items.map { try $0.toRankingScore }
+        let rankingScoreResponse = try Score.toRankingScore(scores: page.items)
         
         return Page(items: rankingScoreResponse, metadata: page.metadata)
     }

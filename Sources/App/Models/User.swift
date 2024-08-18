@@ -55,11 +55,33 @@ extension User: Validatable {
 extension User: ModelSessionAuthenticatable, ModelCredentialsAuthenticatable {}
 
 extension User {
-    var toUserDTO: UserDTO {
-        UserDTO(id: id ?? UUID(),
-                email: email,
-                username: username,
-                fullName: fullName,
-                biography: biography)
+    
+    struct UserResponse: Content {
+        let id: UUID
+        let email: String
+        let username: String
+        let fullName: String
+        let biography: String?
+    }
+    
+    var toUserResponse: UserResponse {
+        get throws {
+            try UserResponse(id: requireID(),
+                        email: email,
+                        username: username,
+                        fullName: fullName,
+                        biography: biography)
+        }
+    }
+    
+    static func toUserResponse(users: [User]) throws -> [UserResponse] {
+        var usersResponse = [UserResponse]()
+        
+        for user in users {
+            let userResponse = try user.toUserResponse
+            usersResponse.append(userResponse)
+        }
+        
+        return usersResponse
     }
 }

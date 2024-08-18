@@ -38,6 +38,7 @@ struct UsersController: RouteCollection {
     @Sendable func createUser(req: Request) async throws -> HTTPStatus {
         try User.validate(content: req)
         let user = try req.content.decode(User.self)
+        
         let existingUser = try await User.query(on: req.db)
             .group(.or) { group in
                 group
@@ -46,18 +47,18 @@ struct UsersController: RouteCollection {
             }
             .first()
         guard existingUser == nil else { throw Abort(.badRequest, reason: "Error procesing request.") }
-        
         user.password = try Bcrypt.hash("\(user.username)@\(user.password)")
         try await user.create(on: req.db)
-        // Enviar email
-        // try await EmailController.shared.sendEmail(req: req, to: user.email)
+        
         return .created
     }
     
     @Sendable func loginJWT(req: Request) async throws -> LoginDTO {
         let user = try req.auth.require(User.self)
+        
         let token = try generateJWT(req: req, subject: user.requireID().uuidString)
-        return LoginDTO(token: token, user: user.toUserDTO)
+        
+        return LoginDTO(token: token, user: try user.toUserResponse)
     }
     
     @Sendable func refreshJWT(req: Request) async throws -> LoginDTO {
@@ -67,35 +68,38 @@ struct UsersController: RouteCollection {
         }
         
         let token = try generateJWT(req: req, subject: user.requireID().uuidString)
-        return LoginDTO(token: token, user: user.toUserDTO)
+        
+        return LoginDTO(token: token, user: try user.toUserResponse)
     }
     
-    @Sendable func getUserInfo(req: Request) async throws -> UserDTO {
+    @Sendable func getUserInfo(req: Request) async throws -> User.UserResponse {
         let payload = try req.auth.require(UserPayload.self)
+        
         guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
             throw Abort(.notFound, reason: "User not found")
         }
         
-        let userDTO = user.toUserDTO
+        let userDTO = try user.toUserResponse
+        
         return userDTO
     }
     
     @Sendable func updateUserAbout(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
+        let about = try req.content.decode(EditUserAboutDTO.self)
+        
         guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
             throw Abort(.notFound, reason: "User not found")
         }
         
-        let about = try req.content.decode(EditUserAboutDTO.self)
-        
         user.biography = about.about
         try await user.update(on: req.db)
+        
         return .ok
     }
     
     @Sendable func sendFriendRequest(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
-        
         let friendDTO = try req.content.decode(FriendDTO.self)
         
         guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
@@ -133,7 +137,7 @@ struct UsersController: RouteCollection {
         return .ok
     }
     
-    @Sendable func listFriends(req: Request) async throws -> [UserDTO] {
+    @Sendable func listFriends(req: Request) async throws -> [User.UserResponse] {
         let payload = try req.auth.require(UserPayload.self)
         
         guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
@@ -145,10 +149,11 @@ struct UsersController: RouteCollection {
             .filter(Friend.self, \Friend.$state == .accepted)
             .all()
         
-        return friends.map { $0.toUserDTO }
+        
+        return try User.toUserResponse(users: friends)
     }
     
-    @Sendable func listPendingRequest(req: Request) async throws -> [UserDTO] {
+    @Sendable func listPendingRequest(req: Request) async throws -> [User.UserResponse] {
         let payload = try req.auth.require(UserPayload.self)
         
         guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
@@ -160,7 +165,7 @@ struct UsersController: RouteCollection {
             .filter(Friend.self, \Friend.$state == .pending)
             .all()
         
-        return friends.map { $0.toUserDTO }
+        return try User.toUserResponse(users: friends)
     }
     
 }

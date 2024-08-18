@@ -58,10 +58,12 @@ extension Game {
     
     static func toGameResponse(games: [Game]) throws -> [GameResponse] {
         var gamesResponse = [Game.GameResponse]()
+        
         for game in games {
             let gameResponse = try game.toGameResponse
             gamesResponse.append(gameResponse)
         }
+        
         return gamesResponse
     }
 }

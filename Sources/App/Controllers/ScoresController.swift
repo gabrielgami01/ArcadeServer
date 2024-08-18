@@ -13,11 +13,10 @@ struct ScoresController: RouteCollection {
     
     @Sendable func addScore(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
-        
         let scoreDTO = try req.content.decode(CreateScoreDTO.self)
         
-        guard let game = try await Game.find(scoreDTO.gameID, on: req.db),
-              let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
+            let game = try await Game.find(scoreDTO.gameID, on: req.db) else {
             throw Abort(.notFound, reason: "Game not found")
         }
                 
@@ -51,9 +50,9 @@ struct ScoresController: RouteCollection {
     @Sendable func getGameScores(req: Request) async throws -> [Score.ScoreResponse] {
         let payload = try req.auth.require(UserPayload.self)
         
-        guard let gameID = req.parameters.get("gameID", as: UUID.self),
-              let game = try await Game.find(gameID, on: req.db),
-              let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
+              let gameID = req.parameters.get("gameID", as: UUID.self),
+              let game = try await Game.find(gameID, on: req.db) else {
             throw Abort(.notFound, reason: "Game not found")
         }
         

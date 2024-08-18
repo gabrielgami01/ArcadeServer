@@ -11,7 +11,7 @@ struct UserDTO: Content {
 
 struct LoginDTO: Content {
     let token: String
-    let user: UserDTO
+    let user: User.UserResponse
 }
 
 struct EditUserAboutDTO: Content {

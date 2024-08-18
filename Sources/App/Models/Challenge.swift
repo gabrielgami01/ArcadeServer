@@ -51,10 +51,12 @@ extension Challenge {
     
     static func toChallengeResponse(challenges: [Challenge]) throws -> [ChallengeResponse] {
         var challengesResponse = [Challenge.ChallengeResponse]()
+        
         for challenge in challenges {
             let challengeResponse = try challenge.toChallengeResponse
             challengesResponse.append(challengeResponse)
         }
+        
         return challengesResponse
     }
 }

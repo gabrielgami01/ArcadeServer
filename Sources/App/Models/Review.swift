@@ -54,10 +54,12 @@ extension Review {
     
     static func toReviewResponse(reviews: [Review]) throws -> [ReviewResponse] {
         var reviewsResponse = [Review.ReviewResponse]()
+        
         for review in reviews {
             let reviewResponse = try review.toReviewResponse
             reviewsResponse.append(reviewResponse)
         }
+        
         return reviewsResponse
     }
 }

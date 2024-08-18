@@ -93,10 +93,12 @@ extension Score {
     
     static func toRankingScore(scores: [Score]) throws -> [RankingScore] {
         var rankingScores = [Score.RankingScore]()
+        
         for score in scores {
             let rankingScore = try score.toRankingScore
             rankingScores.append(rankingScore)
         }
+        
         return rankingScores
     }
     

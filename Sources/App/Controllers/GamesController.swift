@@ -21,8 +21,7 @@ struct GamesController: RouteCollection {
     @Sendable func getAllGames(req: Request) async throws -> Page<Game.GameResponse> {
         let page = try await Game.query(on: req.db)
             .paginate(for: req)
-           
-        let gameResponses = try page.items.map { try $0.toGameResponse }
+        let gameResponses = try Game.toGameResponse(games: page.items)
            
         return Page(items: gameResponses, metadata: page.metadata)
     }
@@ -33,13 +32,11 @@ struct GamesController: RouteCollection {
         }
 
         let searchPattern = "%\(gameName)%"
-
         let page = try await Game
             .query(on: req.db)
             .filter(\.$name, .custom("ILIKE"), searchPattern)
             .paginate(for: req)
-        
-        let gameResponses = try page.items.map { try $0.toGameResponse }
+        let gameResponses = try Game.toGameResponse(games: page.items)
         
         return Page(items: gameResponses, metadata: page.metadata)
     }
@@ -54,8 +51,7 @@ struct GamesController: RouteCollection {
             .query(on: req.db)
             .filter(\.$console == console)
             .paginate(for: req)
-           
-        let gameResponses = try page.items.map { try $0.toGameResponse }
+        let gameResponses = try Game.toGameResponse(games: page.items)
         
         return Page(items: gameResponses, metadata: page.metadata)
     }
@@ -71,25 +67,24 @@ struct GamesController: RouteCollection {
     
     @Sendable func addFavoriteGame(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
-        
         let gameDTO = try req.content.decode(GameDTO.self)
         
-        guard let game = try await Game.find(gameDTO.id, on: req.db),
-              let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
+              let game = try await Game.find(gameDTO.id, on: req.db) else {
             throw Abort(.notFound, reason: "Game not found")
         }
                 
         try await user.$gamesFavorites.attach(game, method: .ifNotExists, on: req.db)
+        
         return .created
     }
     
     @Sendable func deleteFavoriteGame(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
-        
         let gameDTO = try req.content.decode(GameDTO.self)
         
-        guard let game = try await Game.find(gameDTO.id, on: req.db),
-              let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
+              let game = try await Game.find(gameDTO.id, on: req.db) else {
             throw Abort(.notFound, reason: "Game not found")
         }
         
@@ -107,7 +102,6 @@ struct GamesController: RouteCollection {
         
         guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
             throw Abort(.badRequest, reason: "User not found")
-
         }
         
         let games = try await user.$gamesFavorites
@@ -120,9 +114,9 @@ struct GamesController: RouteCollection {
     @Sendable func isFavoriteGame(req: Request) async throws -> Bool {
         let payload = try req.auth.require(UserPayload.self)
         
-        guard let gameID = req.parameters.get("gameID", as: UUID.self),
-              let game = try await Game.find(gameID, on: req.db),
-              let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
+              let gameID = req.parameters.get("gameID", as: UUID.self),
+              let game = try await Game.find(gameID, on: req.db) else {
             throw Abort(.notFound, reason: "Game not found")
         }
         

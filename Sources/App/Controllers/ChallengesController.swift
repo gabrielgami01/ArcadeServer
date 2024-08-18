@@ -19,9 +19,7 @@ struct ChallengesController: RouteCollection {
             .with(\.$game)
             .all()
         
-        let challengeResponses = try challenges.map { try $0.toChallengeResponse }
-        
-        return challengeResponses
+        return try Challenge.toChallengeResponse(challenges: challenges)
     }
     
     @Sendable func getChallengesByType(req: Request) async throws ->  [Challenge.ChallengeResponse] {
@@ -37,18 +35,16 @@ struct ChallengesController: RouteCollection {
             .with(\.$game)
             .filter(\.$type == type)
             .all()
-           
-        let challengeResponses = try challenges.map { try $0.toChallengeResponse }
         
-        return challengeResponses
+        return try Challenge.toChallengeResponse(challenges: challenges)
     }
     
     @Sendable func isChallengeCompleted(req: Request) async throws -> Bool {
         let payload = try req.auth.require(UserPayload.self)
         
-        guard let challengeID = req.parameters.get("challengeID", as: UUID.self),
-              let challenge = try await Challenge.find(challengeID, on: req.db),
-              let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
+              let challengeID = req.parameters.get("challengeID", as: UUID.self),
+              let challenge = try await Challenge.find(challengeID, on: req.db) else {
             throw Abort(.notFound, reason: "Challenge not found")
         }
         
