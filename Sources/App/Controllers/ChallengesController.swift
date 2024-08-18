@@ -24,23 +24,23 @@ struct ChallengesController: RouteCollection {
         return challengeResponses
     }
     
-    @Sendable func getChallengesByType(req: Request) async throws ->  Page<Challenge.ChallengeResponse> {
+    @Sendable func getChallengesByType(req: Request) async throws ->  [Challenge.ChallengeResponse] {
         guard let typeName = req.query[String.self, at: "type"],
               let type = ChallengeType(rawValue: typeName) else {
                 throw Abort(.badRequest, reason: "Query parameter 'typeName' is required")
         }
         
-        let page = try await Challenge
+        let challenges = try await Challenge
             .query(on: req.db)
             .join(Game.self, on: \Challenge.$game.$id == \Game.$id)
             .sort(Game.self, \Game.$name)
             .with(\.$game)
             .filter(\.$type == type)
-            .paginate(for: req)
+            .all()
            
-        let challengesResponses = try page.items.map { try $0.toChallengeResponse }
+        let challengeResponses = try challenges.map { try $0.toChallengeResponse }
         
-        return Page(items: challengesResponses, metadata: page.metadata)
+        return challengeResponses
     }
     
     @Sendable func isChallengeCompleted(req: Request) async throws -> Bool {
