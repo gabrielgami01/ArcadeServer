@@ -4,25 +4,23 @@ import Fluent
 struct GamesController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let api = routes.grouped("api", "games")
-        let games = api.grouped(UserPayload.authenticator(),
-                                    UserPayload.guardMiddleware())
-        games.get(use: getAllGames)
+        
+        let games = api.grouped(UserPayload.authenticator(), UserPayload.guardMiddleware())
+        games.get("list", use: getAllGames)
         games.get("byConsole", use: getGamesByConsole)
         games.get("featured", use: getFeaturedGames)
         games.get("search", use: searchGame)
         
         let favorites = games.grouped("favorites")
-        favorites.group("") { game in
-            game.get(use: getFavoriteGames)
-            game.post(use: addFavoriteGame)
-            game.delete(use: removeFavoriteGame)
-        }
-        favorites.get(":gameID", use: isFavoriteGame)
+        favorites.get("list", use: getFavoriteGames)
+        favorites.post("addGame", use: addFavoriteGame)
+        favorites.delete("deleteGame", use: deleteFavoriteGame)
+        favorites.get("isFavorite", ":gameID", use: isFavoriteGame)
     }
     
     @Sendable func getAllGames(req: Request) async throws -> Page<Game.GameResponse> {
         let page = try await Game.query(on: req.db)
-               .paginate(for: req)
+            .paginate(for: req)
            
         let gameResponses = try page.items.map { try $0.toGameResponse }
            
@@ -33,7 +31,7 @@ struct GamesController: RouteCollection {
         guard let gameName = req.query[String.self, at: "game"] else {
                 throw Abort(.badRequest, reason: "Query parameter 'gameName' is required")
         }
-        //Esto envuelve gameName con comodines %, lo que significa que cualquier juego cuyo nombre contenga gameName será coincidente.
+
         let searchPattern = "%\(gameName)%"
 
         let page = try await Game
@@ -81,12 +79,11 @@ struct GamesController: RouteCollection {
             throw Abort(.notFound, reason: "Game not found")
         }
                 
-        //try await user.$games.load(on: req.db)
         try await user.$gamesFavorites.attach(game, method: .ifNotExists, on: req.db)
         return .created
     }
     
-    @Sendable func removeFavoriteGame(req: Request) async throws -> HTTPStatus {
+    @Sendable func deleteFavoriteGame(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
         
         let gameDTO = try req.content.decode(GameDTO.self)

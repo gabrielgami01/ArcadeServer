@@ -19,17 +19,15 @@ struct UsersController: RouteCollection {
         let create = api.grouped(AppAPIKeyAuthenticator())
         create.post("create", use: createUser)
     
-        let secure = api.grouped(User.authenticator())
-            .grouped(User.guardMiddleware())
-        secure.get("loginJWT", use: loginJWT)
+        let secure = api.grouped(User.authenticator()).grouped(User.guardMiddleware())
+        secure.get("login", use: loginJWT)
         
-        let jwtSecure = api.grouped(UserPayload.authenticator(),
-                                    UserPayload.guardMiddleware())
-        jwtSecure.get("refreshJWT", use: refreshJWT)
-        jwtSecure.get("userInfo", use: getUserInfo)
-        jwtSecure.put("updateAbout", use: updateUserAbout)
+        let users = api.grouped(UserPayload.authenticator(),UserPayload.guardMiddleware())
+        users.get("refreshJWT", use: refreshJWT)
+        users.get("userInfo", use: getUserInfo)
+        users.put("updateAbout", use: updateUserAbout)
         
-        let friends = jwtSecure.grouped("friends")
+        let friends = users.grouped("friends")
         friends.get("list", use: listFriends)
         friends.get("listPending", use: listPendingRequest)
         friends.post("sendRequest", use: sendFriendRequest)

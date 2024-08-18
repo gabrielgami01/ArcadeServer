@@ -4,14 +4,10 @@ import Fluent
 struct ReviewsController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let api = routes.grouped("api", "reviews")
-        let reviews = api.grouped(UserPayload.authenticator(),
-                                    UserPayload.guardMiddleware())
-        
-        reviews.group("") { review in
-            review.post(use: addReview)
-        }
-        reviews.get(":gameID", use: getGameReviews)
-        
+    
+        let reviews = api.grouped(UserPayload.authenticator(), UserPayload.guardMiddleware())
+        reviews.get( "list", ":gameID", use: getGameReviews)
+        reviews.post("add", use: addReview)
     }
     
     @Sendable func getGameReviews(req: Request) async throws -> [Review.ReviewResponse] {

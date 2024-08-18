@@ -4,24 +4,24 @@ import Vapor
 struct ChallengesController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let api = routes.grouped("api", "challenges")
-        let challenges = api.grouped(UserPayload.authenticator(),
-                                    UserPayload.guardMiddleware())
-        challenges.get(use: getAllChallenges)
+        
+        let challenges = api.grouped(UserPayload.authenticator(), UserPayload.guardMiddleware())
+        challenges.get("list", use: getAllChallenges)
         challenges.get("byType", use: getChallengesByType)
-        challenges.get(":challengeID", use: isChallengeCompleted)
+        challenges.get("isCompleted", ":challengeID", use: isChallengeCompleted)
     }
     
-    @Sendable func getAllChallenges(req: Request) async throws -> Page<Challenge.ChallengeResponse> {
-        let page = try await Challenge
+    @Sendable func getAllChallenges(req: Request) async throws -> [Challenge.ChallengeResponse] {
+        let challenges = try await Challenge
             .query(on: req.db)
             .join(Game.self, on: \Challenge.$game.$id == \Game.$id)
             .sort(Game.self, \Game.$name)
             .with(\.$game)
-            .paginate(for: req)
-           
-        let challengeResponses = try page.items.map { try $0.toChallengeResponse }
+            .all()
         
-        return Page(items: challengeResponses, metadata: page.metadata)
+        let challengeResponses = try challenges.map { try $0.toChallengeResponse }
+        
+        return challengeResponses
     }
     
     @Sendable func getChallengesByType(req: Request) async throws ->  Page<Challenge.ChallengeResponse> {

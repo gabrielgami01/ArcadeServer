@@ -5,11 +5,10 @@ import NIO
 struct ScoresController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let api = routes.grouped("api", "scores")
-        let scores = api.grouped(UserPayload.authenticator(),
-                                    UserPayload.guardMiddleware())
         
-        scores.post(use: addScore)
-        scores.get(":gameID", use: getGameScores)
+        let scores = api.grouped(UserPayload.authenticator(), UserPayload.guardMiddleware())
+        scores.post("add", use: addScore)
+        scores.get("list", ":gameID", use: getGameScores)
     }
     
     @Sendable func addScore(req: Request) async throws -> HTTPStatus {

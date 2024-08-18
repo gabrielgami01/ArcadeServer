@@ -4,9 +4,9 @@ import Fluent
 struct RankingsController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let api = routes.grouped("api", "rankings")
-        let rankings = api.grouped(UserPayload.authenticator(),
-                                    UserPayload.guardMiddleware())
-        rankings.get(":gameID", use: getGameRanking)
+        let rankings = api.grouped(UserPayload.authenticator(), UserPayload.guardMiddleware())
+        
+        rankings.get("list", ":gameID", use: getGameRanking)
     }
     
     @Sendable func getGameRanking(req: Request) async throws -> Page<Score.RankingScore> {
