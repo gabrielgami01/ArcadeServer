@@ -17,13 +17,7 @@ struct LoginDTO: Content {
 struct EditUserAboutDTO: Content {
     let about: String
 }
- 
-extension User {
-    var toUserDTO: UserDTO {
-        UserDTO(id: id ?? UUID(),
-                email: email,
-                username: username,
-                fullName: fullName,
-                biography: biography)
-    }
+
+struct FriendDTO: Content {
+    let id: UUID
 }

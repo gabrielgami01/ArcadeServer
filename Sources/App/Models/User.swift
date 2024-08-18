@@ -19,6 +19,7 @@ final class User: Model, Content {
     @Siblings(through: UserChallenges.self, from: \.$user, to: \.$challenge) var completedChallenges: [Challenge]
     @Siblings(through: Review.self, from: \.$user, to: \.$game) var gamesReviews: [Game]
     @Siblings(through: Score.self, from: \.$user, to: \.$game) var gamesScores: [Game]
+    @Siblings(through: Friend.self, from: \.$userA, to: \.$userB) var friends: [User]
     
     init() {}
     
@@ -53,3 +54,12 @@ extension User: Validatable {
 
 extension User: ModelSessionAuthenticatable, ModelCredentialsAuthenticatable {}
 
+extension User {
+    var toUserDTO: UserDTO {
+        UserDTO(id: id ?? UUID(),
+                email: email,
+                username: username,
+                fullName: fullName,
+                biography: biography)
+    }
+}
