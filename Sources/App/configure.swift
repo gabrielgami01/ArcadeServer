@@ -26,7 +26,6 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(ScoreMigration())
     app.migrations.add(ChallengeMigration())
     app.migrations.add(UserChallengeMigration())
-    app.migrations.add(FriendMigration())
     
     app.migrations.add(DataMigration())
     

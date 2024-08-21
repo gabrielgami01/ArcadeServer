@@ -42,11 +42,5 @@ extension FieldKey {
     static let title = FieldKey("title")
     static let comment = FieldKey("comment")
     static let rating = FieldKey("rating")
-    
-    //Friend
-    static let userA = FieldKey("user_a")
-    static let userB = FieldKey("user_b")
-    
-    
-    
+
 }

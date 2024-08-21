@@ -17,7 +17,3 @@ struct LoginDTO: Content {
 struct EditUserAboutDTO: Content {
     let about: String
 }
-
-struct FriendDTO: Content {
-    let id: UUID
-}
