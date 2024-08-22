@@ -33,6 +33,7 @@ extension FieldKey {
     //Challenge
     static let challenge = FieldKey("challenge")
     static let targetScore = FieldKey("target_score")
+    static let position = FieldKey("position")
     
     //Score
     static let score = FieldKey("score")

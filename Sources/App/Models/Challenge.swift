@@ -15,6 +15,7 @@ final class Challenge: Model, Content {
     @Parent(key: .game) var game: Game
     
     @Siblings(through: UserChallenges.self, from: \.$challenge, to: \.$user) var users: [User]
+    @Siblings(through: UserChallenges.self, from: \.$challenge, to: \.$user) var usersEmblem: [User]
     
     init() {}
     
@@ -58,5 +59,30 @@ extension Challenge {
         }
         
         return challengesResponse
+    }
+}
+
+extension Challenge {
+    struct EmblemResponse: Content {
+        let id: UUID
+        let name: String
+    }
+    
+    var toEmblemResponse: EmblemResponse {
+        get throws{
+            try EmblemResponse(id: requireID(),
+                               name: name)
+        }
+    }
+    
+    static func toEmblemResponse(challenges: [Challenge]) throws -> [EmblemResponse] {
+        var emblemsResponse = [Challenge.EmblemResponse]()
+        
+        for challenge in challenges {
+            let emblemResponse = try challenge.toEmblemResponse
+            emblemsResponse.append(emblemResponse)
+        }
+        
+        return emblemsResponse
     }
 }

@@ -52,9 +52,9 @@ struct EnumMigration: AsyncMigration {
     
     
     func revert(on database: any Database) async throws {
-        try await database.enum("console")
+        try await database.enum("consoles")
             .delete()
-        try await database.enum("genre")
+        try await database.enum("genres")
             .delete()
         try await database.enum("score_states")
             .delete()

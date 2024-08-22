@@ -1,8 +1,8 @@
-//
-//  File.swift
-//  
-//
-//  Created by Gabriel Garcia Millan on 21/8/24.
-//
-
 import Foundation
+import Vapor
+import Fluent
+
+
+struct CreateEmblemDTO: Content {
+    let id: UUID
+}

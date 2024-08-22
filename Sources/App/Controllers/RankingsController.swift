@@ -21,7 +21,7 @@ struct RankingsController: RouteCollection {
             .$pivots
             .query(on: req.db)
             .filter(\.$state == .verified)
-            .sort(.score)
+            .sort(\.$score)
             .paginate(for: req)
         let rankingScoreResponse = try Score.toRankingScore(scores: page.items)
         

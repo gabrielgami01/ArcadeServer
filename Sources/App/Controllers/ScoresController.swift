@@ -25,7 +25,7 @@ struct ScoresController: RouteCollection {
         let scoreID = try await user.$gamesScores
             .$pivots
             .query(on: req.db)
-            .sort(.createdAt)
+            .sort(\.$createdAt)
             .first()?
             .id
         
