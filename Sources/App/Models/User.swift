@@ -12,7 +12,7 @@ final class User: Model, Content {
     @Field(key: .email) var email: String
     @Field(key: .fullName) var fullName: String
     @Field(key: .biography) var biography: String?
-    @Field(key: .avatarURL) var avatarURL: String?
+    @Field(key: .avatarImage) var avatarImage: Data?
     @Timestamp(key: .createdAt, on: .create) var createdAt: Date?
     
     @Siblings(through: FavoriteGame.self, from: \.$user, to: \.$game) var gamesFavorites: [Game]
@@ -23,14 +23,14 @@ final class User: Model, Content {
     
     init() {}
     
-    init(id: UUID? = nil, username: String, password: String, email: String, fullName: String, biography: String? = nil, avatarURL: String? = nil, createdAt: Date? = nil) {
+    init(id: UUID? = nil, username: String, password: String, email: String, fullName: String, biography: String? = nil, avatarImage: Data? = nil, createdAt: Date? = nil) {
         self.id = id
         self.username = username
         self.password = password
         self.email = email
         self.fullName = fullName
         self.biography = biography
-        self.avatarURL = avatarURL
+        self.avatarImage = avatarImage
         self.createdAt = createdAt
     }
 }
@@ -61,15 +61,17 @@ extension User {
         let username: String
         let fullName: String
         let biography: String?
+        let avatarImage: Data?
     }
     
     var toUserResponse: UserResponse {
         get throws {
             try UserResponse(id: requireID(),
-                        email: email,
-                        username: username,
-                        fullName: fullName,
-                        biography: biography)
+                             email: email,
+                             username: username,
+                             fullName: fullName,
+                             biography: biography,
+                             avatarImage: avatarImage)
         }
     }
     

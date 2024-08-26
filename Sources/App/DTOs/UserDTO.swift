@@ -17,3 +17,7 @@ struct LoginDTO: Content {
 struct EditUserAboutDTO: Content {
     let about: String
 }
+
+struct AddUserImageDTO: Content {
+    let image: Data
+}

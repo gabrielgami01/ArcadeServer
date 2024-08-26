@@ -37,7 +37,7 @@ extension Review {
         let rating: Int
         let date: Date
         let username: String
-        let avatar: String?
+        let avatarImage: Data?
     }
     
     var toReviewResponse: ReviewResponse {
@@ -48,7 +48,7 @@ extension Review {
                                rating: rating,
                                date: createdAt ?? .distantPast,
                                username: user.username,
-                               avatar: user.avatarURL)
+                               avatarImage: user.avatarImage)
         }
     }
     

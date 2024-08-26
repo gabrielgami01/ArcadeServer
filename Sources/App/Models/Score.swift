@@ -79,6 +79,7 @@ extension Score {
         let score: Int
         let date: Date
         let user: String
+        let avatarImage: Data?
     }
     
     var toRankingScore: RankingScore {
@@ -86,7 +87,8 @@ extension Score {
             try RankingScore(id: requireID(),
                              score: score ?? 0,
                              date: createdAt ?? .distantPast,
-                             user: user.username
+                             user: user.username,
+                             avatarImage: user.avatarImage
             )
         }
     }

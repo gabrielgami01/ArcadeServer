@@ -26,6 +26,7 @@ struct UsersController: RouteCollection {
         users.get("refreshJWT", use: refreshJWT)
         users.get("userInfo", use: getUserInfo)
         users.put("updateAbout", use: updateUserAbout)
+        users.put("updateAvatar", use: updateUserAvatar)
     }
     
     @Sendable func createUser(req: Request) async throws -> HTTPStatus {
@@ -72,20 +73,32 @@ struct UsersController: RouteCollection {
             throw Abort(.notFound, reason: "User not found")
         }
         
-        let userDTO = try user.toUserResponse
-        
-        return userDTO
+        return try user.toUserResponse
     }
     
     @Sendable func updateUserAbout(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
-        let about = try req.content.decode(EditUserAboutDTO.self)
+        let aboutDTO = try req.content.decode(EditUserAboutDTO.self)
         
         guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
             throw Abort(.notFound, reason: "User not found")
         }
         
-        user.biography = about.about
+        user.biography = aboutDTO.about
+        try await user.update(on: req.db)
+        
+        return .ok
+    }
+    
+    @Sendable func updateUserAvatar(req: Request) async throws -> HTTPStatus {
+        let payload = try req.auth.require(UserPayload.self)
+        let imageDTO = try req.content.decode(AddUserImageDTO.self)
+        
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+            throw Abort(.notFound, reason: "User not found")
+        }
+        
+        user.avatarImage = imageDTO.image
         try await user.update(on: req.db)
         
         return .ok
