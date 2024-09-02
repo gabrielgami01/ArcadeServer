@@ -26,19 +26,18 @@ struct GamesController: RouteCollection {
         return Page(items: gameResponses, metadata: page.metadata)
     }
     
-    @Sendable func searchGame(req: Request) async throws -> Page<Game.GameResponse> {
+    @Sendable func searchGame(req: Request) async throws -> [Game.GameResponse] {
         guard let gameName = req.query[String.self, at: "game"] else {
                 throw Abort(.badRequest, reason: "Query parameter 'gameName' is required")
         }
 
         let searchPattern = "%\(gameName)%"
-        let page = try await Game
+        let games = try await Game
             .query(on: req.db)
             .filter(\.$name, .custom("ILIKE"), searchPattern)
-            .paginate(for: req)
-        let gameResponses = try Game.toGameResponse(games: page.items)
-        
-        return Page(items: gameResponses, metadata: page.metadata)
+            .all()
+    
+        return try Game.toGameResponse(games: games)
     }
     
     @Sendable func getGamesByConsole(req: Request) async throws -> Page<Game.GameResponse> {

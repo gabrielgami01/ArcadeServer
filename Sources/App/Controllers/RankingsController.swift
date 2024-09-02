@@ -20,6 +20,7 @@ struct RankingsController: RouteCollection {
         let page = try await game.$usersScores
             .$pivots
             .query(on: req.db)
+            .with(\.$user)
             .filter(\.$state == .verified)
             .sort(\.$score)
             .paginate(for: req)

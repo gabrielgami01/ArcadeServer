@@ -60,6 +60,7 @@ struct ScoresController: RouteCollection {
             .$pivots
             .query(on: req.db)
             .filter(\.$game.$id == game.requireID())
+            .sort(\.$createdAt, .descending)
             .all()
         
         return try Score.toScoreResponse(scores: scores)

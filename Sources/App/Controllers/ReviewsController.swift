@@ -20,6 +20,7 @@ struct ReviewsController: RouteCollection {
             .$pivots
             .query(on: req.db)
             .with(\.$user)
+            .sort(\.$createdAt, .descending)
             .all()
         
         return try Review.toReviewResponse(reviews: reviews)

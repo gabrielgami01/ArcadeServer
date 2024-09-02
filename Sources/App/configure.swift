@@ -42,7 +42,7 @@ public func configure(_ app: Application) async throws {
     
     app.queues.schedule(CheckChallengeJob())
         .hourly()
-        .at(0)
+        .at(1)
     
     try app.queues.startScheduledJobs()
     
