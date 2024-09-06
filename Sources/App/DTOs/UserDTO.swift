@@ -21,3 +21,4 @@ struct EditUserAboutDTO: Content {
 struct AddUserImageDTO: Content {
     let image: Data
 }
+

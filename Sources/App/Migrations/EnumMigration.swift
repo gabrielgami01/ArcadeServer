@@ -41,15 +41,7 @@ struct EnumMigration: AsyncMigration {
             .case("silver")
             .case("bronze")
             .create()
-        
-        let _ =  try await database.enum("friendship_state")
-            .case("pending")
-            .case("accepted")
-            .case("declined")
-            .create()
     }
-    
-    
     
     func revert(on database: any Database) async throws {
         try await database.enum("consoles")
@@ -59,8 +51,6 @@ struct EnumMigration: AsyncMigration {
         try await database.enum("score_states")
             .delete()
         try await database.enum("challenge_types")
-            .delete()
-        try await database.enum("friendship_state")
             .delete()
     }
 }

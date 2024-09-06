@@ -10,11 +10,6 @@ struct ChallengesController: RouteCollection {
         challenges.get("byType", use: getChallengesByType)
         challenges.get("listCompleted", use: getCompletedChallenges)
         challenges.get("isCompleted", ":challengeID", use: isChallengeCompleted)
-        
-        let emblems = challenges.grouped("emblems")
-        emblems.get("listActive", use: getUserEmblems)
-        emblems.post("add", use: addEmblem)
-        emblems.delete("delete", use: deleteEmblem)
     }
     
     @Sendable func getAllChallenges(req: Request) async throws -> [Challenge.ChallengeResponse] {
@@ -75,50 +70,4 @@ struct ChallengesController: RouteCollection {
         
         return try Challenge.toChallengeResponse(challenges: challenges)
     }
-    
-    @Sendable func getUserEmblems(req: Request) async throws -> [Challenge.EmblemResponse] {
-        let payload = try req.auth.require(UserPayload.self)
-        
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
-            throw Abort(.notFound, reason: "User not found")
-        }
-        
-        let emblems = try await user.$activeEmblems
-            .query(on: req.db)
-            .all()
-        
-        return try Challenge.toEmblemResponse(challenges: emblems)
-    }
-    
-    @Sendable func addEmblem(req: Request) async throws -> HTTPStatus {
-        let payload = try req.auth.require(UserPayload.self)
-        let emblemDTO = try req.content.decode(CreateEmblemDTO.self)
-        
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
-              let challenge = try await Challenge.find(emblemDTO.id, on: req.db) else {
-            throw Abort(.notFound, reason: "Challenge not found")
-        }
-        
-        try await user.$activeEmblems.attach(challenge, method: .ifNotExists, on: req.db)
-        
-        return .created
-    }
-    
-    @Sendable func deleteEmblem(req: Request) async throws -> HTTPStatus {
-        let payload = try req.auth.require(UserPayload.self)
-        let emblemDTO = try req.content.decode(CreateEmblemDTO.self)
-        
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
-              let challenge = try await Challenge.find(emblemDTO.id, on: req.db) else {
-            throw Abort(.notFound, reason: "Challenge not found")
-        }
-        
-        if try await user.$activeEmblems.isAttached(to: challenge, on: req.db) {
-            try await user.$activeEmblems.detach(challenge, on: req.db)
-        }
-        
-        return .ok
-    }
-    
-    
 }

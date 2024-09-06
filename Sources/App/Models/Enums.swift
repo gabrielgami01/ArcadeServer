@@ -39,3 +39,8 @@ enum ChallengeType: String, Codable {
     case bronze
 }
 
+enum FriendshipStatus: String, Content {
+    case pending
+    case accepted
+    case none
+}

@@ -10,8 +10,6 @@ struct RankingsController: RouteCollection {
     }
     
     @Sendable func getGameRanking(req: Request) async throws -> Page<Score.RankingScore> {
-        //let payload = try req.auth.require(UserPayload.self)
-        
         guard let gameID = req.parameters.get("gameID", as: UUID.self),
               let game = try await Game.find(gameID, on: req.db) else {
             throw Abort(.notFound, reason: "Game not found")
@@ -22,7 +20,7 @@ struct RankingsController: RouteCollection {
             .query(on: req.db)
             .with(\.$user)
             .filter(\.$state == .verified)
-            .sort(\.$score)
+            .sort(\.$score, .descending)
             .paginate(for: req)
         let rankingScoreResponse = try Score.toRankingScore(scores: page.items)
         

@@ -55,6 +55,9 @@ extension Score {
         return scoresResponse
     }
     
+}
+
+extension Score {
     struct ScoreView: Content {
         let id: UUID
         let game: String
@@ -67,18 +70,20 @@ extension Score {
             let imageURL = "http://localhost:8080/scores/\(try requireID()).jpg"
             print(imageURL)
             return ScoreView(id: try requireID(),
-                      game: game.name,
-                      user: user.username,
-                      imageURL: imageURL
+                             game: game.name,
+                             user: user.username,
+                             imageURL: imageURL
             )
         }
     }
-    
+}
+
+extension Score {
     struct RankingScore: Content {
         let id: UUID
         let score: Int
         let date: Date
-        let user: String
+        let user: User.UserResponse
         let avatarImage: Data?
     }
     
@@ -87,7 +92,7 @@ extension Score {
             try RankingScore(id: requireID(),
                              score: score ?? 0,
                              date: createdAt ?? .distantPast,
-                             user: user.username,
+                             user: user.toUserResponse,
                              avatarImage: user.avatarImage
             )
         }
@@ -103,6 +108,4 @@ extension Score {
         
         return rankingScores
     }
-    
 }
-
