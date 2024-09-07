@@ -20,6 +20,8 @@ final class User: Model, Content {
     @Siblings(through: Review.self, from: \.$user, to: \.$game) var gamesReviews: [Game]
     @Siblings(through: Score.self, from: \.$user, to: \.$game) var gamesScores: [Game]
     @Siblings(through: UserEmblems.self, from: \.$user, to: \.$challenge) var activeEmblems: [Challenge]
+    @Siblings(through: UserFollow.self, from: \.$follower, to: \.$followed) var following: [User]
+    @Siblings(through: UserFollow.self, from: \.$followed, to: \.$follower) var followers: [User]
     
     init() {}
     

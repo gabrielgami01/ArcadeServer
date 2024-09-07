@@ -44,4 +44,7 @@ extension FieldKey {
     static let comment = FieldKey("comment")
     static let rating = FieldKey("rating")
     
+    //Follow
+    static let follower = FieldKey("follower")
+    static let followed = FieldKey("followed")
 }

@@ -10,4 +10,5 @@ func routes(_ app: Application) throws {
     try app.register(collection: RankingsController())
     try app.register(collection: WebController())
     try app.register(collection: EmblemsController())
+    try app.register(collection: FollowController())
 }
