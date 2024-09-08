@@ -20,6 +20,7 @@ struct GamesController: RouteCollection {
     
     @Sendable func getAllGames(req: Request) async throws -> Page<Game.GameResponse> {
         let page = try await Game.query(on: req.db)
+            .sort(\.$name)
             .paginate(for: req)
         let gameResponses = try Game.toGameResponse(games: page.items)
            
@@ -35,6 +36,7 @@ struct GamesController: RouteCollection {
         let games = try await Game
             .query(on: req.db)
             .filter(\.$name, .custom("ILIKE"), searchPattern)
+            .sort(\.$name)
             .all()
     
         return try Game.toGameResponse(games: games)
@@ -49,6 +51,7 @@ struct GamesController: RouteCollection {
         let page = try await Game
             .query(on: req.db)
             .filter(\.$console == console)
+            .sort(\.$name)
             .paginate(for: req)
         let gameResponses = try Game.toGameResponse(games: page.items)
         
@@ -59,6 +62,7 @@ struct GamesController: RouteCollection {
         let games = try await Game
             .query(on: req.db)
             .filter(\.$featured == true)
+            .sort(\.$name)
             .all()
         
         return try Game.toGameResponse(games: games)
@@ -105,6 +109,7 @@ struct GamesController: RouteCollection {
         
         let games = try await user.$gamesFavorites
             .query(on: req.db) 
+            .sort(\.$name)
             .all()
         
         return try Game.toGameResponse(games: games)
