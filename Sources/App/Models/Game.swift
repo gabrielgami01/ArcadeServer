@@ -34,7 +34,7 @@ final class Game: Model, Content {
 }
 
 extension Game {
-    struct GameResponse: Content {
+    struct Response: Content {
         let id: UUID
         let name: String
         let description: String
@@ -44,9 +44,9 @@ extension Game {
         let featured: Bool
     }
     
-    var toGameResponse: GameResponse {
+    var toResponse: Response {
         get throws{
-           try GameResponse(id: requireID(),
+           try Response(id: requireID(),
                             name: name,
                             description: description,
                             console: console.rawValue,
@@ -56,14 +56,14 @@ extension Game {
         }
     }
     
-    static func toGameResponse(games: [Game]) throws -> [GameResponse] {
-        var gamesResponse = [Game.GameResponse]()
+    static func toResponse(games: [Game]) throws -> [Response] {
+        var responses = [Game.Response]()
         
         for game in games {
-            let gameResponse = try game.toGameResponse
-            gamesResponse.append(gameResponse)
+            let response = try game.toResponse
+            responses.append(response)
         }
         
-        return gamesResponse
+        return responses
     }
 }

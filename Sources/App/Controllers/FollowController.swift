@@ -8,9 +8,8 @@ struct FollowController: RouteCollection {
         let follow = api.grouped(UserPayload.authenticator(), UserPayload.guardMiddleware())
         follow.get("listFollowing", use: getFollowing)
         follow.get("listFollowers", use: getFollowers)
-        follow.get("isFollowed", ":userID", use: isFollowed)
-        follow.post("followUser", use: followUser)
-        follow.delete("unfollowUser", ":userID", use: unfollowUser)
+        follow.post("follow", use: followUser)
+        follow.delete("unfollow", ":userID", use: unfollowUser)
     }
     
     @Sendable func getFollowing(req: Request) async throws -> [UserFollow.Response] {
@@ -25,7 +24,6 @@ struct FollowController: RouteCollection {
             .query(on: req.db)
             .with(\.$followed)
             .all()
-        
         
         return try UserFollow.toResponse(usersFollow, type: .followed)
     }
@@ -43,36 +41,26 @@ struct FollowController: RouteCollection {
             .with(\.$follower)
             .all()
         
-        
         return try UserFollow.toResponse(usersFollow, type: .follower)
-    }
-    
-    @Sendable func isFollowed(req: Request) async throws -> Bool {
-        let payload = try req.auth.require(UserPayload.self)
-        
-        guard let follower = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
-              let followedID = req.parameters.get("userID", as: UUID.self),
-              let followed = try await User.find(followedID, on: req.db) else {
-            throw Abort(.notFound, reason: "User not found")
-        }
-
-        if try await follower.$following.isAttached(to: followed, on: req.db) {
-            return true
-        } else {
-           return false
-        }
     }
     
     @Sendable func followUser(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
-        let userDTO = try req.content.decode(UserDTO.self)
+        let followsDTO = try req.content.decode(FollowsDTO.self)
         
-        guard let follower = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
-              let followed = try await User.find(userDTO.id, on: req.db) else {
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
             throw Abort(.notFound, reason: "User not found")
         }
+        
+        guard let otherUser = try await User.find(followsDTO.userID, on: req.db) else {
+            throw Abort(.notFound, reason: "Other user not found")
+        }
 
-        try await follower.$following.attach(followed, on: req.db)
+        if try await user.$following.isAttached(to: otherUser, on: req.db) {
+            throw Abort(.notFound, reason: "Already following this user")
+        } else {
+            try await user.$following.attach(otherUser, on: req.db)
+        }
         
         return .created
     }
@@ -80,16 +68,19 @@ struct FollowController: RouteCollection {
     @Sendable func unfollowUser(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
         
-        guard let follower = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
-              let followedID = req.parameters.get("userID", as: UUID.self),
-              let followed = try await User.find(followedID, on: req.db) else {
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
             throw Abort(.notFound, reason: "User not found")
         }
+        
+        guard let otherUserID = req.parameters.get("userID", as: UUID.self),
+              let otherUser = try await User.find(otherUserID, on: req.db) else {
+            throw Abort(.notFound, reason: "Other user not found")
+        }
 
-        if try await follower.$following.isAttached(to: followed, on: req.db) {
-            try await follower.$following.detach(followed, on: req.db)
+        if try await user.$following.isAttached(to: otherUser, on: req.db) {
+            try await user.$following.detach(otherUser, on: req.db)
         } else {
-            throw Abort(.notFound, reason: "User is no followed")
+            throw Abort(.notFound, reason: "Not following this user")
         }
         
         return .ok

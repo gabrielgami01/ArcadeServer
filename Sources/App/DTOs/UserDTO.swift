@@ -1,20 +1,18 @@
 import Vapor
 import Fluent
 
-struct UserDTO: Content {
-    let id: UUID
+struct FollowsDTO: Content {
+    let userID: UUID
 }
 
 struct LoginDTO: Content {
     let token: String
-    let user: User.UserResponse
+    let user: User.Response
 }
 
-struct EditUserAboutDTO: Content {
-    let about: String
+struct UpdateUserDTO: Content {
+    let about: String?
+    let imageData: Data?
 }
 
-struct AddUserImageDTO: Content {
-    let image: Data
-}
 

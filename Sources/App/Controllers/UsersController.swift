@@ -24,7 +24,6 @@ struct UsersController: RouteCollection {
         
         let users = api.grouped(UserPayload.authenticator(),UserPayload.guardMiddleware())
         users.get("refreshJWT", use: refreshJWT)
-        users.get("userInfo", use: getUserInfo)
         users.put("updateAbout", use: updateUserAbout)
         users.put("updateAvatar", use: updateUserAvatar)
     }
@@ -40,7 +39,10 @@ struct UsersController: RouteCollection {
                     .filter(\.$email == user.email)
             }
             .first()
-        guard existingUser == nil else { throw Abort(.badRequest, reason: "Error procesing request.") }
+        guard existingUser == nil else {
+            throw Abort(.badRequest, reason: "Error procesing request.")
+        }
+        
         user.password = try Bcrypt.hash("\(user.username)@\(user.password)")
         try await user.create(on: req.db)
         
@@ -52,7 +54,7 @@ struct UsersController: RouteCollection {
         
         let token = try generateJWT(req: req, subject: user.requireID().uuidString)
         
-        return LoginDTO(token: token, user: try user.toUserResponse)
+        return LoginDTO(token: token, user: try user.toResponse)
     }
     
     @Sendable func refreshJWT(req: Request) async throws -> LoginDTO {
@@ -63,28 +65,19 @@ struct UsersController: RouteCollection {
         
         let token = try generateJWT(req: req, subject: user.requireID().uuidString)
         
-        return LoginDTO(token: token, user: try user.toUserResponse)
-    }
-    
-    @Sendable func getUserInfo(req: Request) async throws -> User.UserResponse {
-        let payload = try req.auth.require(UserPayload.self)
-        
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
-            throw Abort(.notFound, reason: "User not found")
-        }
-        
-        return try user.toUserResponse
+        return LoginDTO(token: token, user: try user.toResponse)
     }
     
     @Sendable func updateUserAbout(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
-        let aboutDTO = try req.content.decode(EditUserAboutDTO.self)
+        let userDTO = try req.content.decode(UpdateUserDTO.self)
         
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
+              let about = userDTO.about else {
             throw Abort(.notFound, reason: "User not found")
         }
         
-        user.biography = aboutDTO.about
+        user.about = about
         try await user.update(on: req.db)
         
         return .ok
@@ -92,13 +85,14 @@ struct UsersController: RouteCollection {
     
     @Sendable func updateUserAvatar(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
-        let imageDTO = try req.content.decode(AddUserImageDTO.self)
+        let userDTO = try req.content.decode(UpdateUserDTO.self)
         
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
+              let imageData = userDTO.imageData else {
             throw Abort(.notFound, reason: "User not found")
         }
         
-        user.avatarImage = imageDTO.image
+        user.avatarImage = imageData
         try await user.update(on: req.db)
         
         return .ok

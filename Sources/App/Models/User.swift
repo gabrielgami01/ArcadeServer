@@ -11,7 +11,7 @@ final class User: Model, Content {
     @Field(key: .password) var password: String
     @Field(key: .email) var email: String
     @Field(key: .fullName) var fullName: String
-    @Field(key: .biography) var biography: String?
+    @Field(key: .about) var about: String?
     @Field(key: .avatarImage) var avatarImage: Data?
     @Timestamp(key: .createdAt, on: .create) var createdAt: Date?
     
@@ -25,13 +25,13 @@ final class User: Model, Content {
     
     init() {}
     
-    init(id: UUID? = nil, username: String, password: String, email: String, fullName: String, biography: String? = nil, avatarImage: Data? = nil, createdAt: Date? = nil) {
+    init(id: UUID? = nil, username: String, password: String, email: String, fullName: String, about: String? = nil, avatarImage: Data? = nil, createdAt: Date? = nil) {
         self.id = id
         self.username = username
         self.password = password
         self.email = email
         self.fullName = fullName
-        self.biography = biography
+        self.about = about
         self.avatarImage = avatarImage
         self.createdAt = createdAt
     }
@@ -57,34 +57,34 @@ extension User: Validatable {
 extension User: ModelSessionAuthenticatable, ModelCredentialsAuthenticatable {}
 
 extension User {
-    struct UserResponse: Content {
+    struct Response: Content {
         let id: UUID
         let email: String
         let username: String
         let fullName: String
-        let biography: String?
+        let about: String?
         let avatarImage: Data?
     }
     
-    var toUserResponse: UserResponse {
+    var toResponse: Response {
         get throws {
-            try UserResponse(id: requireID(),
+            try Response(id: requireID(),
                              email: email,
                              username: username,
                              fullName: fullName,
-                             biography: biography,
+                             about: about,
                              avatarImage: avatarImage)
         }
     }
     
-    static func toUserResponse(users: [User]) throws -> [UserResponse] {
-        var usersResponse = [UserResponse]()
+    static func toResponse(users: [User]) throws -> [Response] {
+        var responses = [Response]()
         
         for user in users {
-            let userResponse = try user.toUserResponse
-            usersResponse.append(userResponse)
+            let response = try user.toResponse
+            responses.append(response)
         }
         
-        return usersResponse
+        return responses
     }
 }

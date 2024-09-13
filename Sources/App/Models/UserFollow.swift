@@ -24,7 +24,7 @@ final class UserFollow: Model, Content {
 extension UserFollow {
     struct Response: Content {
         let id: UUID
-        let user: User.UserResponse
+        let user: User.Response
         let createdAt: Date
     }
     
@@ -35,7 +35,7 @@ extension UserFollow {
     var toFollowerResponse: Response {
         get throws {
             try Response(id: requireID(),
-                         user: follower.toUserResponse,
+                         user: follower.toResponse,
                          createdAt: createdAt ?? .distantPast
                          
             )
@@ -45,7 +45,7 @@ extension UserFollow {
     var toFollowedResponse: Response {
         get throws {
             try Response(id: requireID(),
-                         user: followed.toUserResponse,
+                         user: followed.toResponse,
                          createdAt: createdAt ?? .distantPast
                          
             )

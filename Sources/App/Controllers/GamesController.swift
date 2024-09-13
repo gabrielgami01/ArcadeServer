@@ -13,21 +13,22 @@ struct GamesController: RouteCollection {
         
         let favorites = games.grouped("favorites")
         favorites.get("list", use: getFavoriteGames)
-        favorites.post("addGame", use: addFavoriteGame)
-        favorites.delete("deleteGame", use: deleteFavoriteGame)
         favorites.get("isFavorite", ":gameID", use: isFavoriteGame)
+        favorites.post("add", use: addFavoriteGame)
+        favorites.delete("delete", "gameID", use: deleteFavoriteGame)
     }
     
-    @Sendable func getAllGames(req: Request) async throws -> Page<Game.GameResponse> {
+    @Sendable func getAllGames(req: Request) async throws -> Page<Game.Response> {
         let page = try await Game.query(on: req.db)
             .sort(\.$name)
             .paginate(for: req)
-        let gameResponses = try Game.toGameResponse(games: page.items)
+        
+        let gameResponses = try Game.toResponse(games: page.items)
            
         return Page(items: gameResponses, metadata: page.metadata)
     }
     
-    @Sendable func searchGame(req: Request) async throws -> [Game.GameResponse] {
+    @Sendable func searchGame(req: Request) async throws -> [Game.Response] { 
         guard let gameName = req.query[String.self, at: "game"] else {
                 throw Abort(.badRequest, reason: "Query parameter 'gameName' is required")
         }
@@ -39,10 +40,10 @@ struct GamesController: RouteCollection {
             .sort(\.$name)
             .all()
     
-        return try Game.toGameResponse(games: games)
+        return try Game.toResponse(games: games)
     }
     
-    @Sendable func getGamesByConsole(req: Request) async throws -> Page<Game.GameResponse> {
+    @Sendable func getGamesByConsole(req: Request) async throws -> Page<Game.Response> {
         guard let consoleName = req.query[String.self, at: "console"],
               let console = Console(rawValue: consoleName) else {
                 throw Abort(.badRequest, reason: "Query parameter 'consoleName' is required")
@@ -53,54 +54,23 @@ struct GamesController: RouteCollection {
             .filter(\.$console == console)
             .sort(\.$name)
             .paginate(for: req)
-        let gameResponses = try Game.toGameResponse(games: page.items)
+        
+        let gameResponses = try Game.toResponse(games: page.items)
         
         return Page(items: gameResponses, metadata: page.metadata)
     }
     
-    @Sendable func getFeaturedGames(req: Request) async throws -> [Game.GameResponse] {
+    @Sendable func getFeaturedGames(req: Request) async throws -> [Game.Response] {
         let games = try await Game
             .query(on: req.db)
             .filter(\.$featured == true)
             .sort(\.$name)
             .all()
         
-        return try Game.toGameResponse(games: games)
+        return try Game.toResponse(games: games)
     }
     
-    @Sendable func addFavoriteGame(req: Request) async throws -> HTTPStatus {
-        let payload = try req.auth.require(UserPayload.self)
-        let gameDTO = try req.content.decode(GameDTO.self)
-        
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
-              let game = try await Game.find(gameDTO.id, on: req.db) else {
-            throw Abort(.notFound, reason: "Game not found")
-        }
-                
-        try await user.$gamesFavorites.attach(game, method: .ifNotExists, on: req.db)
-        
-        return .created
-    }
-    
-    @Sendable func deleteFavoriteGame(req: Request) async throws -> HTTPStatus {
-        let payload = try req.auth.require(UserPayload.self)
-        let gameDTO = try req.content.decode(GameDTO.self)
-        
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
-              let game = try await Game.find(gameDTO.id, on: req.db) else {
-            throw Abort(.notFound, reason: "Game not found")
-        }
-        
-        if try await game.$usersFavorites.isAttached(to: user, on: req.db) {
-            try await game.$usersFavorites.detach(user, on: req.db)
-            return .ok
-        } else {
-            throw Abort(.badRequest, reason: "The game is not favorited")
-        }
-        
-    }
-    
-    @Sendable func getFavoriteGames(req: Request) async throws -> [Game.GameResponse] {
+    @Sendable func getFavoriteGames(req: Request) async throws -> [Game.Response] {
         let payload = try req.auth.require(UserPayload.self)
         
         guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
@@ -108,18 +78,21 @@ struct GamesController: RouteCollection {
         }
         
         let games = try await user.$gamesFavorites
-            .query(on: req.db) 
-            .sort(\.$name)
+            .query(on: req.db)
+            .sort(FavoriteGame.self, \FavoriteGame.$createdAt)
             .all()
         
-        return try Game.toGameResponse(games: games)
+        return try Game.toResponse(games: games)
     }
     
     @Sendable func isFavoriteGame(req: Request) async throws -> Bool {
         let payload = try req.auth.require(UserPayload.self)
         
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
-              let gameID = req.parameters.get("gameID", as: UUID.self),
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+            throw Abort(.badRequest, reason: "User not found")
+        }
+        
+        guard let gameID = req.parameters.get("gameID", as: UUID.self),
               let game = try await Game.find(gameID, on: req.db) else {
             throw Abort(.notFound, reason: "Game not found")
         }
@@ -129,5 +102,45 @@ struct GamesController: RouteCollection {
         } else {
             false
         }
+    }
+    
+    @Sendable func addFavoriteGame(req: Request) async throws -> HTTPStatus {
+        let payload = try req.auth.require(UserPayload.self)
+        let favoriteDTO = try req.content.decode(FavoriteDTO.self)
+        
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+            throw Abort(.badRequest, reason: "User not found")
+        }
+        
+        guard let game = try await Game.find(favoriteDTO.gameID, on: req.db) else {
+            throw Abort(.notFound, reason: "Game not found")
+        }
+        
+        if try await user.$gamesFavorites.isAttached(to: game, on: req.db) {
+            throw Abort(.notFound, reason: "Game already favorite")
+        } else {
+            try await user.$gamesFavorites.attach(game, on: req.db)
+            return .created
+        }
+    }
+    
+    @Sendable func deleteFavoriteGame(req: Request) async throws -> HTTPStatus {
+        let payload = try req.auth.require(UserPayload.self)
+        
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+            throw Abort(.badRequest, reason: "User not found")
+        }
+        
+        guard let gameID = req.parameters.get("gameID", as: UUID.self),
+              let game = try await Game.find(gameID, on: req.db) else {
+            throw Abort(.notFound, reason: "Game not found")
+        }
+        
+        if try await game.$usersFavorites.isAttached(to: user, on: req.db) {
+            try await game.$usersFavorites.detach(user, on: req.db)
+            return .ok
+        } else {
+            throw Abort(.badRequest, reason: "The game is not favorited")
+        }   
     }
 }

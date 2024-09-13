@@ -8,7 +8,7 @@ final class Score: Model, Content {
     
     @ID(key: .id) var id: UUID?
     @Field(key: .score) var score: Int?
-    @Enum(key: .state) var state: ScoreState
+    @Enum(key: .status) var status: ScoreStatus
     @Field(key: .reviewed) var reviewed: Bool
     @Timestamp(key: .createdAt, on: .create) var createdAt: Date?
     
@@ -17,10 +17,10 @@ final class Score: Model, Content {
     
     init() {}
     
-    init(id: UUID? = nil, score: Int? = nil, state: ScoreState, reviewed: Bool = false, createdAt: Date? = nil, game: Game.IDValue, user: User.IDValue) {
+    init(id: UUID? = nil, score: Int? = nil, status: ScoreStatus, reviewed: Bool = false, createdAt: Date? = nil, game: Game.IDValue, user: User.IDValue) {
         self.id = id
         self.score = score
-        self.state = state
+        self.status = status
         self.reviewed = reviewed
         self.createdAt = createdAt
         self.$game.id = game
@@ -29,50 +29,49 @@ final class Score: Model, Content {
 }
 
 extension Score {
-    struct ScoreResponse: Content {
+    struct Response: Content {
         let id: UUID
         let score: Int?
-        let state: ScoreState
+        let status: ScoreStatus
         let date: Date
     }
     
-    var toScoreResponse: ScoreResponse {
+    var toResponse: Response {
         get throws {
-            try ScoreResponse(id: requireID(),
+            try Response(id: requireID(),
                               score: score,
-                              state: state,
+                              status: status,
                               date: createdAt ?? .distantPast
             )
         }
     }
     
-    static func toScoreResponse(scores: [Score]) throws -> [ScoreResponse] {
-        var scoresResponse = [Score.ScoreResponse]()
+    static func toResponse(scores: [Score]) throws -> [Response] {
+        var responses = [Score.Response]()
         for score in scores {
-            let scoreResponse = try score.toScoreResponse
-            scoresResponse.append(scoreResponse)
+            let response = try score.toResponse
+            responses.append(response)
         }
-        return scoresResponse
+        return responses
     }
-    
 }
 
 extension Score {
-    struct ScoreView: Content {
+    struct View: Content {
         let id: UUID
         let game: String
         let user: String
         let imageURL: String
     }
     
-    var toScoreView: ScoreView {
+    var toView: View {
         get throws {
             let imageURL = "http://localhost:8080/scores/\(try requireID()).jpg"
             print(imageURL)
-            return ScoreView(id: try requireID(),
-                             game: game.name,
-                             user: user.username,
-                             imageURL: imageURL
+            return View(id: try requireID(),
+                        game: game.name,
+                        user: user.username,
+                        imageURL: imageURL
             )
         }
     }
@@ -83,7 +82,7 @@ extension Score {
         let id: UUID
         let score: Int
         let date: Date
-        let user: User.UserResponse
+        let user: User.Response
         let avatarImage: Data?
     }
     
@@ -92,7 +91,7 @@ extension Score {
             try RankingScore(id: requireID(),
                              score: score ?? 0,
                              date: createdAt ?? .distantPast,
-                             user: user.toUserResponse,
+                             user: user.toResponse,
                              avatarImage: user.avatarImage
             )
         }

@@ -7,7 +7,7 @@ extension FieldKey {
     static let description = FieldKey("description")
     static let imageURL = FieldKey("image_url")
     static let date = FieldKey("date")
-    static let state = FieldKey("state")
+    static let status = FieldKey("status")
     static let type = FieldKey("type")
     
     //Model
@@ -26,7 +26,7 @@ extension FieldKey {
     static let password = FieldKey("password")
     static let email = FieldKey("email")
     static let fullName = FieldKey("fullname")
-    static let biography = FieldKey("biography")
+    static let about = FieldKey("about")
     static let avatarImage = FieldKey("avatar_image")
     static let createdAt = FieldKey("created_at")
     

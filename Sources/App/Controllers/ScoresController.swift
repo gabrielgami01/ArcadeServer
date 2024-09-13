@@ -15,8 +15,11 @@ struct ScoresController: RouteCollection {
         let payload = try req.auth.require(UserPayload.self)
         let scoreDTO = try req.content.decode(CreateScoreDTO.self)
         
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
-            let game = try await Game.find(scoreDTO.gameID, on: req.db) else {
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+            throw Abort(.badRequest, reason: "User not found")
+        }
+        
+        guard let game = try await Game.find(scoreDTO.gameID, on: req.db)  else {
             throw Abort(.notFound, reason: "Game not found")
         }
                 
@@ -47,11 +50,14 @@ struct ScoresController: RouteCollection {
         return .created
     }
     
-    @Sendable func getGameScores(req: Request) async throws -> [Score.ScoreResponse] {
+    @Sendable func getGameScores(req: Request) async throws -> [Score.Response] {
         let payload = try req.auth.require(UserPayload.self)
         
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
-              let gameID = req.parameters.get("gameID", as: UUID.self),
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+            throw Abort(.badRequest, reason: "User not found")
+        }
+        
+        guard let gameID = req.parameters.get("gameID", as: UUID.self),
               let game = try await Game.find(gameID, on: req.db) else {
             throw Abort(.notFound, reason: "Game not found")
         }
@@ -63,7 +69,7 @@ struct ScoresController: RouteCollection {
             .sort(\.$createdAt, .descending)
             .all()
         
-        return try Score.toScoreResponse(scores: scores)
+        return try Score.toResponse(scores: scores)
     }
 }
 

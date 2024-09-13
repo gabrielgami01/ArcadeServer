@@ -28,7 +28,7 @@ enum Genre: String, Codable {
     case strategy = "Strategy"
 }
 
-enum ScoreState: String, Codable {
+enum ScoreStatus: String, Codable {
     case verified
     case unverified
 }

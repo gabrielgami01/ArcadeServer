@@ -12,12 +12,12 @@ struct WebController: RouteCollection {
     @Sendable func scoresList(req: Request) async throws -> View {
         let scores = try await Score
                     .query(on: req.db)
-                    .filter(\.$state == .unverified)
+                    .filter(\.$status == .unverified)
                     .with(\.$game)
                     .with(\.$user)
                     .all()
         
-        let parameters = try ScoreParameters(title: "Scores", scores: scores.map{ try $0.toScoreView })
+        let parameters = try ScoreParameters(title: "Scores", scores: scores.map{ try $0.toView })
        
         return try await req.view.render("scores", parameters)
     }
@@ -30,7 +30,7 @@ struct WebController: RouteCollection {
         }
         
         score.score = scoreDTO.score
-        score.state = .verified
+        score.status = .verified
        
         try await score.save(on: req.db)
 
@@ -40,5 +40,5 @@ struct WebController: RouteCollection {
 
 struct ScoreParameters: Encodable {
     let title: String
-    let scores: [Score.ScoreView]
+    let scores: [Score.View]
 }

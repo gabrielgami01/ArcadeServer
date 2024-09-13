@@ -30,34 +30,34 @@ final class Review: Model, Content {
 
 
 extension Review {
-    struct ReviewResponse: Content {
+    struct Response: Content {
         let id: UUID
         let title: String
         let comment: String?
         let rating: Int
         let date: Date
-        let user: User.UserResponse
+        let user: User.Response
     }
     
-    var toReviewResponse: ReviewResponse {
+    var toResponse: Response {
         get throws {
-            try ReviewResponse(id: requireID(),
+            try Response(id: requireID(),
                                title: title,
                                comment: comment,
                                rating: rating,
                                date: createdAt ?? .distantPast,
-                               user: user.toUserResponse)
+                               user: user.toResponse)
         }
     }
     
-    static func toReviewResponse(reviews: [Review]) throws -> [ReviewResponse] {
-        var reviewsResponse = [Review.ReviewResponse]()
+    static func toResponse(reviews: [Review]) throws -> [Response] {
+        var responses = [Review.Response]()
         
         for review in reviews {
-            let reviewResponse = try review.toReviewResponse
-            reviewsResponse.append(reviewResponse)
+            let response = try review.toResponse
+            responses.append(response)
         }
         
-        return reviewsResponse
+        return responses
     }
 }

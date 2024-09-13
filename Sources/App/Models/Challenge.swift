@@ -30,7 +30,7 @@ final class Challenge: Model, Content {
 }
 
 extension Challenge {
-    struct ChallengeResponse: Content {
+    struct Response: Content {
         let id: UUID
         let name: String
         let description: String
@@ -39,9 +39,9 @@ extension Challenge {
         let game: String
     }
     
-    var toChallengeResponse: ChallengeResponse {
+    var toResponse: Response {
         get throws{
-            try ChallengeResponse(id: requireID(),
+            try Response(id: requireID(),
                                   name: name,
                                   description: description,
                                   targetScore: targetScore,
@@ -50,39 +50,15 @@ extension Challenge {
         }
     }
     
-    static func toChallengeResponse(challenges: [Challenge]) throws -> [ChallengeResponse] {
-        var challengesResponse = [Challenge.ChallengeResponse]()
+    static func toResponse(challenges: [Challenge]) throws -> [Response] {
+        var responses = [Challenge.Response]()
         
         for challenge in challenges {
-            let challengeResponse = try challenge.toChallengeResponse
-            challengesResponse.append(challengeResponse)
+            let response = try challenge.toResponse
+            responses.append(response)
         }
         
-        return challengesResponse
+        return responses
     }
 }
 
-extension Challenge {
-    struct EmblemResponse: Content {
-        let id: UUID
-        let name: String
-    }
-    
-    var toEmblemResponse: EmblemResponse {
-        get throws{
-            try EmblemResponse(id: requireID(),
-                               name: name)
-        }
-    }
-    
-    static func toEmblemResponse(challenges: [Challenge]) throws -> [EmblemResponse] {
-        var emblemsResponse = [Challenge.EmblemResponse]()
-        
-        for challenge in challenges {
-            let emblemResponse = try challenge.toEmblemResponse
-            emblemsResponse.append(emblemResponse)
-        }
-        
-        return emblemsResponse
-    }
-}

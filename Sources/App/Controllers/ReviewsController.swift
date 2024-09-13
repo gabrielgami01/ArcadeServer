@@ -6,11 +6,11 @@ struct ReviewsController: RouteCollection {
         let api = routes.grouped("api", "reviews")
     
         let reviews = api.grouped(UserPayload.authenticator(), UserPayload.guardMiddleware())
-        reviews.get( "list", ":gameID", use: getGameReviews)
+        reviews.get("listByGame", ":gameID", use: getGameReviews)
         reviews.post("add", use: addReview)
     }
     
-    @Sendable func getGameReviews(req: Request) async throws -> [Review.ReviewResponse] {
+    @Sendable func getGameReviews(req: Request) async throws -> [Review.Response] {
         guard let gameID = req.parameters.get("gameID", as: UUID.self),
               let game = try await Game.find(gameID, on: req.db) else {
             throw Abort(.notFound, reason: "Game not found")
@@ -23,15 +23,18 @@ struct ReviewsController: RouteCollection {
             .sort(\.$createdAt, .descending)
             .all()
         
-        return try Review.toReviewResponse(reviews: reviews)
+        return try Review.toResponse(reviews: reviews)
     }
     
     @Sendable func addReview(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
         let reviewDTO = try req.content.decode(CreateReviewDTO.self)
         
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
-              let game = try await Game.find(reviewDTO.gameID, on: req.db) else {
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+            throw Abort(.badRequest, reason: "User not found")
+        }
+        
+        guard let game = try await Game.find(reviewDTO.gameID, on: req.db) else {
             throw Abort(.notFound, reason: "Game not found")
         }
                 

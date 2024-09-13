@@ -19,7 +19,7 @@ struct CheckChallengeJob: AsyncScheduledJob {
         let queryScores = try await Score.query(on: db)
             .with(\.$game)
             .with(\.$user)
-            .filter(\.$state == .verified)
+            .filter(\.$status == .verified)
             .filter(\.$reviewed == false)
             .all()
         
