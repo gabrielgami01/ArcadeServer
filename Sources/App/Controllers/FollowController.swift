@@ -13,32 +13,38 @@ struct FollowController: RouteCollection {
         follow.delete("unfollowUser", ":userID", use: unfollowUser)
     }
     
-    @Sendable func getFollowing(req: Request) async throws -> [User.UserResponse] {
+    @Sendable func getFollowing(req: Request) async throws -> [UserFollow.Response] {
         let payload = try req.auth.require(UserPayload.self)
-       
+        
         guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
             throw Abort(.notFound, reason: "User not found")
         }
 
-        let users = try await user.$following
+        let usersFollow = try await user.$following
+            .$pivots
             .query(on: req.db)
+            .with(\.$followed)
             .all()
         
-        return try User.toUserResponse(users: users)
+        
+        return try UserFollow.toResponse(usersFollow, type: .followed)
     }
     
-    @Sendable func getFollowers(req: Request) async throws -> [User.UserResponse] {
+    @Sendable func getFollowers(req: Request) async throws -> [UserFollow.Response] {
         let payload = try req.auth.require(UserPayload.self)
         
         guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
             throw Abort(.notFound, reason: "User not found")
         }
 
-        let users = try await user.$followers
+        let usersFollow = try await user.$followers
+            .$pivots
             .query(on: req.db)
+            .with(\.$follower)
             .all()
         
-        return try User.toUserResponse(users: users)
+        
+        return try UserFollow.toResponse(usersFollow, type: .follower)
     }
     
     @Sendable func isFollowed(req: Request) async throws -> Bool {
