@@ -42,7 +42,7 @@ public func configure(_ app: Application) async throws {
     app.queues.use(.redis(redisConfig))
     
     app.queues.schedule(CheckChallengeJob())
-        .hourly()
+        .minutely()
         .at(1)
     
     try app.queues.startScheduledJobs()

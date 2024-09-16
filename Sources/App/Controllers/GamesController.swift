@@ -15,7 +15,7 @@ struct GamesController: RouteCollection {
         favorites.get("list", use: getFavoriteGames)
         favorites.get("isFavorite", ":gameID", use: isFavoriteGame)
         favorites.post("add", use: addFavoriteGame)
-        favorites.delete("delete", "gameID", use: deleteFavoriteGame)
+        favorites.delete("delete", ":gameID", use: deleteFavoriteGame)
     }
     
     @Sendable func getAllGames(req: Request) async throws -> Page<Game.Response> {

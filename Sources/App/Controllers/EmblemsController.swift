@@ -9,7 +9,7 @@ struct EmblemsController: RouteCollection {
         emblems.get("listActive", use: getActiveUserEmblems)
         emblems.get("listActive", ":userID", use: getUserEmblems)
         emblems.post("add", use: addEmblem)
-        emblems.delete("update", "emblemID", use: updateEmblem)
+        emblems.delete("delete", ":challengeID", use: deleteEmblem)
     }
     
     @Sendable func getActiveUserEmblems(req: Request) async throws -> [UserEmblems.Response] {
@@ -22,6 +22,9 @@ struct EmblemsController: RouteCollection {
         let emblems = try await user.$activeEmblems
             .$pivots
             .query(on: req.db)
+            .with(\.$challenge) { challenge in
+                challenge.with(\.$game)
+            }
             .all()
         
         return try UserEmblems.toResponse(userEmblems: emblems)
@@ -36,6 +39,9 @@ struct EmblemsController: RouteCollection {
         let emblems = try await user.$activeEmblems
             .$pivots
             .query(on: req.db)
+            .with(\.$challenge) { challenge in
+                challenge.with(\.$game)
+            }
             .sort(\.$createdAt)
             .all()
         
@@ -62,22 +68,24 @@ struct EmblemsController: RouteCollection {
         }
     }
     
-    @Sendable func updateEmblem(req: Request) async throws -> HTTPStatus {
-        let emblemDTO = try req.content.decode(EmblemDTO.self)
+    @Sendable func deleteEmblem(req: Request) async throws -> HTTPStatus {
+        let payload = try req.auth.require(UserPayload.self)
         
-        guard let emblemID = req.parameters.get("emblemID", as: UUID.self),
-              let emblem = try await UserEmblems.find(emblemID, on: req.db) else {
-            throw Abort(.notFound, reason: "Emblem not found")
+        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
+            throw Abort(.notFound, reason: "User not found")
         }
         
-        guard let challenge = try await Challenge.find(emblemDTO.challengeID, on: req.db) else {
+        guard let challengeID = req.parameters.get("challengeID", as: UUID.self),
+              let challenge = try await Challenge.find(challengeID, on: req.db) else {
             throw Abort(.notFound, reason: "Challenge not found")
         }
         
-        emblem.challenge = challenge
-        try await emblem.update(on: req.db)
-        
-        return .created
+        if try await user.$activeEmblems.isAttached(to: challenge, on: req.db) {
+            try await user.$activeEmblems.detach(challenge, on: req.db)
+            return .ok
+        } else {
+            throw Abort(.notFound, reason: "Emblem not found")
+        }
     }
     
     

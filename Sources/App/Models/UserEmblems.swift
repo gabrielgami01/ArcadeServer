@@ -23,13 +23,13 @@ final class UserEmblems: Model, Content {
 extension UserEmblems {
     struct Response: Content {
         let id: UUID
-        let challenge: Challenge
+        let challenge: Challenge.Response
     }
     
     var toResponse: Response {
         get throws {
             try Response(id: requireID(),
-                         challenge: challenge
+                         challenge: challenge.toResponse
             )
         }
     }
