@@ -20,8 +20,8 @@ final class User: Model, Content {
     @Siblings(through: Review.self, from: \.$user, to: \.$game) var gamesReviews: [Game]
     @Siblings(through: Score.self, from: \.$user, to: \.$game) var gamesScores: [Game]
     @Siblings(through: UserEmblems.self, from: \.$user, to: \.$challenge) var activeEmblems: [Challenge]
-    @Siblings(through: UserFollow.self, from: \.$follower, to: \.$followed) var following: [User]
-    @Siblings(through: UserFollow.self, from: \.$followed, to: \.$follower) var followers: [User]
+    @Siblings(through: UserConnections.self, from: \.$follower, to: \.$followed) var following: [User]
+    @Siblings(through: UserConnections.self, from: \.$followed, to: \.$follower) var followers: [User]
     
     init() {}
     
@@ -38,8 +38,13 @@ final class User: Model, Content {
 }
 
 extension User: ModelAuthenticatable {
-    static let usernameKey = \User.$username
-    static let passwordHashKey = \User.$password
+    static var usernameKey: KeyPath<User, Field<String>> {
+        \User.$username
+    }
+    
+    static var passwordHashKey: KeyPath<User, Field<String>> {
+        \User.$password
+    }
     
     func verify(password: String) throws -> Bool {
         try Bcrypt.verify("\(self.username)@\(password)", created: self.password)

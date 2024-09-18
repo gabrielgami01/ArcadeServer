@@ -1,7 +1,7 @@
 import Vapor
 import Fluent
 
-struct FollowsDTO: Content {
+struct ConnectionDTO: Content {
     let userID: UUID
 }
 

@@ -1,9 +1,9 @@
 import Vapor
 import Fluent
 
-struct UserFollowMigration: AsyncMigration {
+struct UserConnectionsMigration: AsyncMigration {
     func prepare(on database: any Database) async throws {
-        try await database.schema(UserFollow.schema)
+        try await database.schema(UserConnections.schema)
             .id()
             .field(.createdAt, .datetime)
             .field(.follower, .uuid, .required, .references(User.schema, .id))
@@ -12,7 +12,7 @@ struct UserFollowMigration: AsyncMigration {
     }
     
     func revert(on database: any Database) async throws {
-        try await database.schema(UserFollow.schema)
+        try await database.schema(UserConnections.schema)
             .delete()
     }
 }

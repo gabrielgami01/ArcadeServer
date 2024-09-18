@@ -1,10 +1,10 @@
 import Vapor
 import Fluent
 
-extension UserFollow: @unchecked Sendable {}
+extension UserConnections: @unchecked Sendable {}
 
-final class UserFollow: Model, Content {
-    static let schema = "user_follow"
+final class UserConnections: Model, Content {
+    static let schema = "user_connections"
     
     @ID(key: .id) var id: UUID?
     @Timestamp(key: .createdAt, on: .create) var createdAt: Date?
@@ -21,7 +21,7 @@ final class UserFollow: Model, Content {
     }
 }
 
-extension UserFollow {
+extension UserConnections {
     struct Response: Content {
         let id: UUID
         let user: User.Response
@@ -37,7 +37,6 @@ extension UserFollow {
             try Response(id: requireID(),
                          user: follower.toResponse,
                          createdAt: createdAt ?? .distantPast
-                         
             )
         }
     }
@@ -47,12 +46,11 @@ extension UserFollow {
             try Response(id: requireID(),
                          user: followed.toResponse,
                          createdAt: createdAt ?? .distantPast
-                         
             )
         }
     }
     
-    static func toResponse(_ array: [UserFollow], type: FollowType) throws -> [Response] {
+    static func toResponse(_ array: [UserConnections], type: FollowType) throws -> [Response] {
         var responses = [Response]()
         
         if type == .follower {

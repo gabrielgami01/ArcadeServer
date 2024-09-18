@@ -12,7 +12,7 @@ struct FollowController: RouteCollection {
         follow.delete("unfollow", ":userID", use: unfollowUser)
     }
     
-    @Sendable func getFollowing(req: Request) async throws -> [UserFollow.Response] {
+    @Sendable func getFollowing(req: Request) async throws -> [UserConnections.Response] {
         let payload = try req.auth.require(UserPayload.self)
         
         guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
@@ -25,10 +25,10 @@ struct FollowController: RouteCollection {
             .with(\.$followed)
             .all()
         
-        return try UserFollow.toResponse(usersFollow, type: .followed)
+        return try UserConnections.toResponse(usersFollow, type: .followed)
     }
     
-    @Sendable func getFollowers(req: Request) async throws -> [UserFollow.Response] {
+    @Sendable func getFollowers(req: Request) async throws -> [UserConnections.Response] {
         let payload = try req.auth.require(UserPayload.self)
         
         guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
@@ -41,18 +41,18 @@ struct FollowController: RouteCollection {
             .with(\.$follower)
             .all()
         
-        return try UserFollow.toResponse(usersFollow, type: .follower)
+        return try UserConnections.toResponse(usersFollow, type: .follower)
     }
     
     @Sendable func followUser(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
-        let followsDTO = try req.content.decode(FollowsDTO.self)
+        let connectionDTO = try req.content.decode(ConnectionDTO.self)
         
         guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
             throw Abort(.notFound, reason: "User not found")
         }
         
-        guard let otherUser = try await User.find(followsDTO.userID, on: req.db) else {
+        guard let otherUser = try await User.find(connectionDTO.userID, on: req.db) else {
             throw Abort(.notFound, reason: "Other user not found")
         }
 
