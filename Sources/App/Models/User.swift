@@ -15,7 +15,7 @@ final class User: Model, Content {
     @Field(key: .avatarImage) var avatarImage: Data?
     @Timestamp(key: .createdAt, on: .create) var createdAt: Date?
     
-    @Siblings(through: FavoriteGame.self, from: \.$user, to: \.$game) var gamesFavorites: [Game]
+    @Siblings(through: FavoriteGame.self, from: \.$user, to: \.$game) var favoriteGames: [Game]
     @Siblings(through: UserChallenges.self, from: \.$user, to: \.$challenge) var completedChallenges: [Challenge]
     @Siblings(through: Review.self, from: \.$user, to: \.$game) var gamesReviews: [Game]
     @Siblings(through: Score.self, from: \.$user, to: \.$game) var gamesScores: [Game]

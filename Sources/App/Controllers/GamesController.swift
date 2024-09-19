@@ -77,7 +77,7 @@ struct GamesController: RouteCollection {
             throw Abort(.badRequest, reason: "User not found")
         }
         
-        let games = try await user.$gamesFavorites
+        let games = try await user.$favoriteGames
             .query(on: req.db)
             .sort(FavoriteGame.self, \FavoriteGame.$createdAt)
             .all()
@@ -116,10 +116,10 @@ struct GamesController: RouteCollection {
             throw Abort(.notFound, reason: "Game not found")
         }
         
-        if try await user.$gamesFavorites.isAttached(to: game, on: req.db) {
+        if try await user.$favoriteGames.isAttached(to: game, on: req.db) {
             throw Abort(.notFound, reason: "Game already favorite")
         } else {
-            try await user.$gamesFavorites.attach(game, on: req.db)
+            try await user.$favoriteGames.attach(game, on: req.db)
             return .created
         }
     }
