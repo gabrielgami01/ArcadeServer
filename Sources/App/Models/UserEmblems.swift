@@ -29,7 +29,7 @@ extension UserEmblems {
     var toResponse: Response {
         get throws {
             try Response(id: requireID(),
-                         challenge: challenge.toResponse
+                         challenge: challenge.toResponse(isCompleted: true)
             )
         }
     }

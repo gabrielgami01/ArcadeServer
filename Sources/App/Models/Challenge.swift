@@ -37,24 +37,31 @@ extension Challenge {
         let targetScore: Int
         let type: ChallengeType
         let game: String
+        let isCompleted: Bool
     }
     
-    var toResponse: Response {
-        get throws{
-            try Response(id: requireID(),
-                                  name: name,
-                                  description: description,
-                                  targetScore: targetScore,
-                                  type: type,
-                                  game: game.name)
-        }
+    func toResponse(isCompleted: Bool) throws -> Response {
+        try Response(id: requireID(),
+                     name: name,
+                     description: description,
+                     targetScore: targetScore,
+                     type: type,
+                     game: game.name,
+                     isCompleted: isCompleted
+        )
     }
     
-    static func toResponse(challenges: [Challenge]) throws -> [Response] {
+    static func toResponse(challenges: [Challenge], for user: User, on db: Database) async throws -> [Response] {
         var responses = [Challenge.Response]()
         
         for challenge in challenges {
-            let response = try challenge.toResponse
+            let challengeID = try challenge.requireID()
+            let completed = try await user.$completedChallenges
+                .query(on: db)
+                .filter(\.$id == challengeID)
+                .first() != nil
+        
+            let response = try challenge.toResponse(isCompleted: completed)
             responses.append(response)
         }
         
