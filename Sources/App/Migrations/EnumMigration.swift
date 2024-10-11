@@ -34,6 +34,7 @@ struct EnumMigration: AsyncMigration {
         let _ = try await database.enum("score_status")
             .case("verified")
             .case("unverified")
+            .case("denied")
             .create()
         
         let _ = try await database.enum("challenge_types")

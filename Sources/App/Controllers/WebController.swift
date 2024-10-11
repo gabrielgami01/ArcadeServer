@@ -6,7 +6,8 @@ struct WebController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let scores = routes.grouped("scores")
         scores.get(use: scoresList)
-        scores.post("update" , use: updateScoreState)
+        scores.post("verify" , use: verifyScore)
+        scores.post("deny" , use: denyScore)
     }
     
     @Sendable func scoresList(req: Request) async throws -> View {
@@ -22,15 +23,31 @@ struct WebController: RouteCollection {
         return try await req.view.render("scores", parameters)
     }
     
-    @Sendable func updateScoreState(req: Request) async throws -> Response {
+    @Sendable func verifyScore(req: Request) async throws -> Response {
         let scoreDTO = try req.content.decode(UpdateScoreDTO.self)
 
         guard let score = try await Score.find(scoreDTO.id, on: req.db) else {
             throw Abort(.notFound, reason: "Score not found")
         }
         
-        score.score = scoreDTO.score
+        if let points = scoreDTO.score {
+            score.score = points
+        }
         score.status = .verified
+       
+        try await score.save(on: req.db)
+
+        return req.redirect(to: "/scores")
+    }
+    
+    @Sendable func denyScore(req: Request) async throws -> Response {
+        let scoreDTO = try req.content.decode(UpdateScoreDTO.self)
+
+        guard let score = try await Score.find(scoreDTO.id, on: req.db) else {
+            throw Abort(.notFound, reason: "Score not found")
+        }
+        
+        score.status = .denied
        
         try await score.save(on: req.db)
 

@@ -1,0 +1,69 @@
+/* General styles for the body */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa; /* Light gray background for better contrast */
+    padding: 20px;
+    margin: 0;
+}
+
+/* Table styling */
+.table-custom {
+    margin: 0 auto;           /* Center the table horizontally */
+    width: 90%;               /* Set the table width */
+    border-collapse: collapse;/* Remove the spacing between table borders */
+    background-color: white;  /* Ensure white background for table */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+    border-radius: 8px;       /* Rounded corners for the table */
+}
+
+/* Table header styling */
+.table-custom thead th {
+    background-color: #007bff; /* Bootstrap blue for the header */
+    color: white;              /* White text for the header */
+    padding: 12px;             /* Spacing inside header cells */
+    text-align: center;        /* Center the header text */
+    font-size: 1.1rem;         /* Slightly larger font for the header */
+    border-bottom: 2px solid #dee2e6; /* Border below header row */
+}
+
+/* Table body styling */
+.table-custom tbody td {
+    padding: 10px;              /* Spacing inside the table cells */
+    text-align: center;         /* Center the content in all table cells */
+    vertical-align: middle;     /* Vertical alignment for content */
+    border: 1px solid #dee2e6;  /* Border for table cells */
+}
+
+/* Image styling inside the table */
+.table-img {
+    max-width: 150px;          /* Maximum width of the image */
+    max-height: 150px;         /* Maximum height of the image */
+    object-fit: cover;         /* Ensure image is contained and cropped */
+    border-radius: 8px;        /* Add rounded corners to the images */
+}
+
+/* Button styling */
+.table-custom .btn-primary {
+    padding: 5px 10px;         /* Adjust padding inside the button */
+    font-size: 0.9rem;         /* Slightly smaller button text */
+    background-color: #007bff; /* Bootstrap blue color */
+    border: none;              /* Remove default borders */
+    border-radius: 5px;        /* Rounded corners for buttons */
+    transition: background-color 0.3s ease; /* Smooth color transition */
+}
+
+/* Button hover effect */
+.table-custom .btn-primary:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Responsive table: Adjust table for smaller screens */
+@media (max-width: 768px) {
+    .table-custom {
+        width: 100%;           /* Make table full-width on smaller screens */
+    }
+
+    .table-custom tbody td {
+        font-size: 0.9rem;      /* Reduce font size on small screens */
+    }
+}

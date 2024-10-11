@@ -31,6 +31,7 @@ enum Genre: String, Codable {
 enum ScoreStatus: String, Codable {
     case verified
     case unverified
+    case denied
 }
 
 enum ChallengeType: String, Codable {
@@ -39,8 +40,3 @@ enum ChallengeType: String, Codable {
     case bronze
 }
 
-enum FriendshipStatus: String, Content {
-    case pending
-    case accepted
-    case none
-}
