@@ -16,6 +16,12 @@ struct ChallengesController: RouteCollection {
             throw Abort(.badRequest, reason: "User not found")
         }
         
+        guard let languageName = req.query[String.self, at: "lang"] else {
+                throw Abort(.badRequest, reason: "Query parameter 'lang' is required")
+        }
+        
+        let language = Language(rawValue: languageName) ?? Language.english
+        
         let challenges = try await Challenge
             .query(on: req.db)
             .join(Game.self, on: \Challenge.$game.$id == \Game.$id)
@@ -23,6 +29,6 @@ struct ChallengesController: RouteCollection {
             .with(\.$game)
             .all()
         
-        return try await Challenge.toResponse(challenges: challenges, for: user, on: req.db)
+        return try await Challenge.toResponse(challenges: challenges, for: user, lang: language, on: req.db)
     }
 }

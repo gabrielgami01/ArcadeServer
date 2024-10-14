@@ -4,7 +4,8 @@ import Fluent
 extension FieldKey {
     //General
     static let name = FieldKey("name")
-    static let description = FieldKey("description")
+    static let descriptionEn = FieldKey("description_en")
+    static let descriptionEs = FieldKey("description_es")
     static let imageURL = FieldKey("image_url")
     static let date = FieldKey("date")
     static let status = FieldKey("status")

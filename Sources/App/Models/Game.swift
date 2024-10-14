@@ -8,7 +8,8 @@ final class Game: Model, Content {
     
     @ID(key: .id) var id: UUID?
     @Field(key: .name) var name: String
-    @Field(key: .description) var description: String
+    @Field(key: .descriptionEn) var descriptionEn: String
+    @Field(key: .descriptionEs) var descriptionEs: String
     @Enum(key: .console) var console: Console
     @Enum(key: .genre) var genre: Genre
     @Field(key: .releaseDate) var releaseDate: Date
@@ -22,10 +23,11 @@ final class Game: Model, Content {
     
     init() {}
     
-    init(id: UUID? = nil, name: String, description: String, releaseDate: Date, console: Console, genre: Genre, featured: Bool) {
+    init(id: UUID? = nil, name: String, descriptionEn: String, descriptionEs: String, releaseDate: Date, console: Console, genre: Genre, featured: Bool) {
         self.id = id
         self.name = name
-        self.description = description
+        self.descriptionEn = descriptionEn
+        self.descriptionEs = descriptionEs
         self.console = console
         self.genre = genre
         self.releaseDate = releaseDate
@@ -44,23 +46,21 @@ extension Game {
         let featured: Bool
     }
     
-    var toResponse: Response {
-        get throws{
-           try Response(id: requireID(),
-                            name: name,
-                            description: description,
-                            console: console.rawValue,
-                            genre: genre.rawValue,
-                            releaseDate: releaseDate,
-                            featured: featured)
-        }
+    func toResponse(lang: Language) throws -> Response {
+        try Response(id: requireID(),
+                     name: name,
+                     description: lang == .english ? descriptionEn : descriptionEs,
+                     console: console.rawValue,
+                     genre: genre.rawValue,
+                     releaseDate: releaseDate,
+                     featured: featured)
     }
     
-    static func toResponse(games: [Game]) throws -> [Response] {
+    static func toResponse(games: [Game], lang: Language) throws -> [Response] {
         var responses = [Game.Response]()
         
         for game in games {
-            let response = try game.toResponse
+            let response = try game.toResponse(lang: lang)
             responses.append(response)
         }
         

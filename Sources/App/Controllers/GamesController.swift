@@ -19,16 +19,28 @@ struct GamesController: RouteCollection {
     }
     
     @Sendable func getAllGames(req: Request) async throws -> Page<Game.Response> {
+        guard let languageName = req.query[String.self, at: "lang"] else {
+                throw Abort(.badRequest, reason: "Query parameter 'lang' is required")
+        }
+        
+        let language = Language(rawValue: languageName) ?? Language.english
+        
         let page = try await Game.query(on: req.db)
             .sort(\.$name)
             .paginate(for: req)
         
-        let gameResponses = try Game.toResponse(games: page.items)
+        let gameResponses = try Game.toResponse(games: page.items, lang: language)
            
         return Page(items: gameResponses, metadata: page.metadata)
     }
     
-    @Sendable func searchGame(req: Request) async throws -> [Game.Response] { 
+    @Sendable func searchGame(req: Request) async throws -> [Game.Response] {
+        guard let languageName = req.query[String.self, at: "lang"] else {
+                throw Abort(.badRequest, reason: "Query parameter 'lang' is required")
+        }
+        
+        let language = Language(rawValue: languageName) ?? Language.english
+        
         guard let gameName = req.query[String.self, at: "game"] else {
                 throw Abort(.badRequest, reason: "Query parameter 'gameName' is required")
         }
@@ -40,7 +52,7 @@ struct GamesController: RouteCollection {
             .sort(\.$name)
             .all()
     
-        return try Game.toResponse(games: games)
+        return try Game.toResponse(games: games, lang: language)
     }
     
     @Sendable func getGamesByConsole(req: Request) async throws -> Page<Game.Response> {
@@ -49,28 +61,46 @@ struct GamesController: RouteCollection {
                 throw Abort(.badRequest, reason: "Query parameter 'consoleName' is required")
         }
         
+        guard let languageName = req.query[String.self, at: "lang"] else {
+                throw Abort(.badRequest, reason: "Query parameter 'lang' is required")
+        }
+        
+        let language = Language(rawValue: languageName) ?? Language.english
+        
         let page = try await Game
             .query(on: req.db)
             .filter(\.$console == console)
             .sort(\.$name)
             .paginate(for: req)
         
-        let gameResponses = try Game.toResponse(games: page.items)
+        let gameResponses = try Game.toResponse(games: page.items, lang: language)
         
         return Page(items: gameResponses, metadata: page.metadata)
     }
     
     @Sendable func getFeaturedGames(req: Request) async throws -> [Game.Response] {
+        guard let languageName = req.query[String.self, at: "lang"] else {
+                throw Abort(.badRequest, reason: "Query parameter 'lang' is required")
+        }
+        
+        let language = Language(rawValue: languageName) ?? Language.english
+        
         let games = try await Game
             .query(on: req.db)
             .filter(\.$featured == true)
             .sort(\.$name)
             .all()
         
-        return try Game.toResponse(games: games)
+        return try Game.toResponse(games: games, lang: language)
     }
     
     @Sendable func getFavoriteGames(req: Request) async throws -> [Game.Response] {
+        guard let languageName = req.query[String.self, at: "lang"] else {
+                throw Abort(.badRequest, reason: "Query parameter 'lang' is required")
+        }
+        
+        let language = Language(rawValue: languageName) ?? Language.english
+        
         let payload = try req.auth.require(UserPayload.self)
         
         guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
@@ -82,7 +112,7 @@ struct GamesController: RouteCollection {
             .sort(FavoriteGame.self, \FavoriteGame.$createdAt)
             .all()
         
-        return try Game.toResponse(games: games)
+        return try Game.toResponse(games: games, lang: language)
     }
     
     @Sendable func isFavoriteGame(req: Request) async throws -> Bool {

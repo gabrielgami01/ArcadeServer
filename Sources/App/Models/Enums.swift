@@ -40,3 +40,7 @@ enum ChallengeType: String, Codable {
     case bronze
 }
 
+enum Language: String, Codable {
+    case english = "en"
+    case spanish = "es"
+}
