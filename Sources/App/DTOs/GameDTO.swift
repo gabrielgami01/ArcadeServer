@@ -2,7 +2,7 @@ import Foundation
 import Vapor
 import Fluent
 
-struct FavoriteDTO: Content {
+struct GameDTO: Content {
     let gameID: UUID
 }
 

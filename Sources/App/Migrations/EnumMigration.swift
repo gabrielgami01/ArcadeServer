@@ -49,7 +49,7 @@ struct EnumMigration: AsyncMigration {
             .delete()
         try await database.enum("genres")
             .delete()
-        try await database.enum("score_states")
+        try await database.enum("score_status")
             .delete()
         try await database.enum("challenge_types")
             .delete()

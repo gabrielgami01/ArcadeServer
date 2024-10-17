@@ -136,13 +136,13 @@ struct GamesController: RouteCollection {
     
     @Sendable func addFavoriteGame(req: Request) async throws -> HTTPStatus {
         let payload = try req.auth.require(UserPayload.self)
-        let favoriteDTO = try req.content.decode(FavoriteDTO.self)
+        let gameDTO = try req.content.decode(GameDTO.self)
         
         guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
             throw Abort(.badRequest, reason: "User not found")
         }
         
-        guard let game = try await Game.find(favoriteDTO.gameID, on: req.db) else {
+        guard let game = try await Game.find(gameDTO.gameID, on: req.db) else {
             throw Abort(.notFound, reason: "Game not found")
         }
         
