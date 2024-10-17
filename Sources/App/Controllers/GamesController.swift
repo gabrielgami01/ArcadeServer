@@ -19,11 +19,7 @@ struct GamesController: RouteCollection {
     }
     
     @Sendable func getAllGames(req: Request) async throws -> Page<Game.Response> {
-        guard let languageName = req.query[String.self, at: "lang"] else {
-                throw Abort(.badRequest, reason: "Query parameter 'lang' is required")
-        }
-        
-        let language = Language(rawValue: languageName) ?? Language.english
+        let language = try getLanguage(req: req)
         
         let page = try await Game.query(on: req.db)
             .sort(\.$name)
@@ -35,11 +31,7 @@ struct GamesController: RouteCollection {
     }
     
     @Sendable func searchGame(req: Request) async throws -> [Game.Response] {
-        guard let languageName = req.query[String.self, at: "lang"] else {
-                throw Abort(.badRequest, reason: "Query parameter 'lang' is required")
-        }
-        
-        let language = Language(rawValue: languageName) ?? Language.english
+        let language = try getLanguage(req: req)
         
         guard let gameName = req.query[String.self, at: "game"] else {
                 throw Abort(.badRequest, reason: "Query parameter 'gameName' is required")
@@ -61,11 +53,7 @@ struct GamesController: RouteCollection {
                 throw Abort(.badRequest, reason: "Query parameter 'consoleName' is required")
         }
         
-        guard let languageName = req.query[String.self, at: "lang"] else {
-                throw Abort(.badRequest, reason: "Query parameter 'lang' is required")
-        }
-        
-        let language = Language(rawValue: languageName) ?? Language.english
+        let language = try getLanguage(req: req)
         
         let page = try await Game
             .query(on: req.db)
@@ -79,11 +67,7 @@ struct GamesController: RouteCollection {
     }
     
     @Sendable func getFeaturedGames(req: Request) async throws -> [Game.Response] {
-        guard let languageName = req.query[String.self, at: "lang"] else {
-                throw Abort(.badRequest, reason: "Query parameter 'lang' is required")
-        }
-        
-        let language = Language(rawValue: languageName) ?? Language.english
+        let language = try getLanguage(req: req)
         
         let games = try await Game
             .query(on: req.db)
@@ -95,18 +79,10 @@ struct GamesController: RouteCollection {
     }
     
     @Sendable func getFavoriteGames(req: Request) async throws -> [Game.Response] {
-        guard let languageName = req.query[String.self, at: "lang"] else {
-                throw Abort(.badRequest, reason: "Query parameter 'lang' is required")
-        }
+        let user = try await getUser(req: req)
         
-        let language = Language(rawValue: languageName) ?? Language.english
-        
-        let payload = try req.auth.require(UserPayload.self)
-        
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
-            throw Abort(.badRequest, reason: "User not found")
-        }
-        
+        let language = try getLanguage(req: req)
+         
         let games = try await user.$favoriteGames
             .query(on: req.db)
             .sort(FavoriteGame.self, \FavoriteGame.$createdAt)
@@ -116,11 +92,7 @@ struct GamesController: RouteCollection {
     }
     
     @Sendable func isFavoriteGame(req: Request) async throws -> Bool {
-        let payload = try req.auth.require(UserPayload.self)
-        
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
-            throw Abort(.badRequest, reason: "User not found")
-        }
+        let user = try await getUser(req: req)
         
         guard let gameID = req.parameters.get("gameID", as: UUID.self),
               let game = try await Game.find(gameID, on: req.db) else {
@@ -135,13 +107,10 @@ struct GamesController: RouteCollection {
     }
     
     @Sendable func addFavoriteGame(req: Request) async throws -> HTTPStatus {
-        let payload = try req.auth.require(UserPayload.self)
+        let user = try await getUser(req: req)
+        
         let gameDTO = try req.content.decode(GameDTO.self)
-        
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
-            throw Abort(.badRequest, reason: "User not found")
-        }
-        
+ 
         guard let game = try await Game.find(gameDTO.gameID, on: req.db) else {
             throw Abort(.notFound, reason: "Game not found")
         }
@@ -155,11 +124,7 @@ struct GamesController: RouteCollection {
     }
     
     @Sendable func deleteFavoriteGame(req: Request) async throws -> HTTPStatus {
-        let payload = try req.auth.require(UserPayload.self)
-        
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
-            throw Abort(.badRequest, reason: "User not found")
-        }
+        let user = try await getUser(req: req)
         
         guard let gameID = req.parameters.get("gameID", as: UUID.self),
               let game = try await Game.find(gameID, on: req.db) else {

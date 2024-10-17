@@ -13,11 +13,7 @@ struct FollowController: RouteCollection {
     }
     
     @Sendable func getFollowing(req: Request) async throws -> [UserConnections.Response] {
-        let payload = try req.auth.require(UserPayload.self)
-        
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
-            throw Abort(.notFound, reason: "User not found")
-        }
+        let user = try await getUser(req: req)
 
         let usersFollow = try await user.$following
             .$pivots
@@ -29,11 +25,7 @@ struct FollowController: RouteCollection {
     }
     
     @Sendable func getFollowers(req: Request) async throws -> [UserConnections.Response] {
-        let payload = try req.auth.require(UserPayload.self)
-        
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
-            throw Abort(.notFound, reason: "User not found")
-        }
+        let user = try await getUser(req: req)
 
         let usersFollow = try await user.$followers
             .$pivots
@@ -45,13 +37,9 @@ struct FollowController: RouteCollection {
     }
     
     @Sendable func followUser(req: Request) async throws -> HTTPStatus {
-        let payload = try req.auth.require(UserPayload.self)
+        let user = try await getUser(req: req)
+        
         let connectionDTO = try req.content.decode(ConnectionDTO.self)
-        
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
-            throw Abort(.notFound, reason: "User not found")
-        }
-        
         guard let otherUser = try await User.find(connectionDTO.userID, on: req.db) else {
             throw Abort(.notFound, reason: "Other user not found")
         }
@@ -66,11 +54,7 @@ struct FollowController: RouteCollection {
     }
     
     @Sendable func unfollowUser(req: Request) async throws -> HTTPStatus {
-        let payload = try req.auth.require(UserPayload.self)
-        
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
-            throw Abort(.notFound, reason: "User not found")
-        }
+        let user = try await getUser(req: req)
         
         guard let otherUserID = req.parameters.get("userID", as: UUID.self),
               let otherUser = try await User.find(otherUserID, on: req.db) else {

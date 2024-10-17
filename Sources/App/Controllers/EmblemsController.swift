@@ -13,11 +13,7 @@ struct EmblemsController: RouteCollection {
     }
     
     @Sendable func getActiveUserEmblems(req: Request) async throws -> [UserEmblems.Response] {
-        let payload = try req.auth.require(UserPayload.self)
-        
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
-            throw Abort(.notFound, reason: "User not found")
-        }
+        let user = try await getUser(req: req)
         
         let emblems = try await user.$activeEmblems
             .$pivots
@@ -49,13 +45,9 @@ struct EmblemsController: RouteCollection {
     }
     
     @Sendable func addEmblem(req: Request) async throws -> HTTPStatus {
-        let payload = try req.auth.require(UserPayload.self)
-        let emblemDTO = try req.content.decode(EmblemDTO.self)
+        let user = try await getUser(req: req)
         
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
-            throw Abort(.notFound, reason: "User not found")
-        }
-        
+        let emblemDTO = try req.content.decode(EmblemDTO.self)      
         guard let challenge = try await Challenge.find(emblemDTO.challengeID, on: req.db) else {
             throw Abort(.notFound, reason: "Challenge not found")
         }
@@ -69,11 +61,7 @@ struct EmblemsController: RouteCollection {
     }
     
     @Sendable func deleteEmblem(req: Request) async throws -> HTTPStatus {
-        let payload = try req.auth.require(UserPayload.self)
-        
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
-            throw Abort(.notFound, reason: "User not found")
-        }
+        let user = try await getUser(req: req)
         
         guard let challengeID = req.parameters.get("challengeID", as: UUID.self),
               let challenge = try await Challenge.find(challengeID, on: req.db) else {

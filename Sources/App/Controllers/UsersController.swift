@@ -58,10 +58,7 @@ struct UsersController: RouteCollection {
     }
     
     @Sendable func refreshJWT(req: Request) async throws -> LoginDTO {
-        let payload = try req.auth.require(UserPayload.self)
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
-            throw Abort(.notFound, reason: "User not found")
-        }
+        let user = try await getUser(req: req)
         
         let token = try generateJWT(req: req, subject: user.requireID().uuidString)
         
@@ -69,12 +66,11 @@ struct UsersController: RouteCollection {
     }
     
     @Sendable func updateUserAbout(req: Request) async throws -> HTTPStatus {
-        let payload = try req.auth.require(UserPayload.self)
-        let userDTO = try req.content.decode(UpdateUserDTO.self)
+        let user = try await getUser(req: req)
         
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
-              let about = userDTO.about else {
-            throw Abort(.notFound, reason: "User not found")
+        let userDTO = try req.content.decode(UpdateUserDTO.self)
+        guard let about = userDTO.about else {
+            throw Abort(.notFound, reason: "Invalid format")
         }
         
         user.about = about
@@ -84,12 +80,11 @@ struct UsersController: RouteCollection {
     }
     
     @Sendable func updateUserAvatar(req: Request) async throws -> HTTPStatus {
-        let payload = try req.auth.require(UserPayload.self)
-        let userDTO = try req.content.decode(UpdateUserDTO.self)
+        let user = try await getUser(req: req)
         
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db),
-              let imageData = userDTO.imageData else {
-            throw Abort(.notFound, reason: "User not found")
+        let userDTO = try req.content.decode(UpdateUserDTO.self)
+        guard let imageData = userDTO.imageData else {
+            throw Abort(.notFound, reason: "Invalid format")
         }
         
         user.avatarImage = imageData

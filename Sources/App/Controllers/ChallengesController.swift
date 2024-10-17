@@ -10,17 +10,9 @@ struct ChallengesController: RouteCollection {
     }
     
     @Sendable func getChallenges(req: Request) async throws -> [Challenge.Response] {
-        let payload = try req.auth.require(UserPayload.self)
+        let user = try await getUser(req: req)
         
-        guard let user = try await User.find(UUID(uuidString: payload.subject.value), on: req.db) else {
-            throw Abort(.badRequest, reason: "User not found")
-        }
-        
-        guard let languageName = req.query[String.self, at: "lang"] else {
-                throw Abort(.badRequest, reason: "Query parameter 'lang' is required")
-        }
-        
-        let language = Language(rawValue: languageName) ?? Language.english
+        let language = try getLanguage(req: req)
         
         let challenges = try await Challenge
             .query(on: req.db)
