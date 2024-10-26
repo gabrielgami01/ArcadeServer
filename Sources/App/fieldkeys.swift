@@ -10,6 +10,8 @@ extension FieldKey {
     static let date = FieldKey("date")
     static let status = FieldKey("status")
     static let type = FieldKey("type")
+    static let createdAt = FieldKey("created_at")
+    static let finishedAt = FieldKey("finished_at")
     
     //Model
     static let game = FieldKey("game")
@@ -29,7 +31,6 @@ extension FieldKey {
     static let fullName = FieldKey("fullname")
     static let about = FieldKey("about")
     static let avatarImage = FieldKey("avatar_image")
-    static let createdAt = FieldKey("created_at")
     
     //Challenge
     static let challenge = FieldKey("challenge")

@@ -22,6 +22,7 @@ final class User: Model, Content {
     @Siblings(through: UserEmblems.self, from: \.$user, to: \.$challenge) var activeEmblems: [Challenge]
     @Siblings(through: UserConnections.self, from: \.$follower, to: \.$followed) var following: [User]
     @Siblings(through: UserConnections.self, from: \.$followed, to: \.$follower) var followers: [User]
+    @Siblings(through: Session.self, from: \.$user, to: \.$game) var gamesSessions: [Game]
     
     init() {}
     

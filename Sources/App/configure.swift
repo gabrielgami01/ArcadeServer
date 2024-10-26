@@ -28,6 +28,7 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(UserChallengeMigration())
     app.migrations.add(UserEmblemsMigration())
     app.migrations.add(UserConnectionsMigration())
+    app.migrations.add(SessionMigration())
     
     app.migrations.add(DataMigration())
     

@@ -11,4 +11,5 @@ func routes(_ app: Application) throws {
     try app.register(collection: WebController())
     try app.register(collection: EmblemsController())
     try app.register(collection: FollowController())
+    try app.register(collection: SessionController())
 }

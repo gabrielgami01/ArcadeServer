@@ -44,3 +44,8 @@ enum Language: String, Codable {
     case english = "en"
     case spanish = "es"
 }
+
+enum SessionStatus: String, Codable {
+    case active
+    case finished
+}
