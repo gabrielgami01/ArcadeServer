@@ -1,4 +1,3 @@
-import Foundation
 import Vapor
 import Fluent
 
@@ -9,5 +8,5 @@ struct CreateScoreDTO: Content {
 
 struct UpdateScoreDTO: Content {
     let id: UUID
-    let score: Int?
+    let score: Int
 }

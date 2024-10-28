@@ -7,7 +7,7 @@ final class Score: Model, Content {
     static let schema = "scores"
     
     @ID(key: .id) var id: UUID?
-    @Field(key: .score) var score: Int?
+    @Field(key: .value) var value: Int?
     @Enum(key: .status) var status: ScoreStatus
     @Field(key: .reviewed) var reviewed: Bool
     @Timestamp(key: .createdAt, on: .create) var createdAt: Date?
@@ -17,9 +17,9 @@ final class Score: Model, Content {
     
     init() {}
     
-    init(id: UUID? = nil, score: Int? = nil, status: ScoreStatus, reviewed: Bool = false, createdAt: Date? = nil, game: Game.IDValue, user: User.IDValue) {
+    init(id: UUID? = nil, value: Int? = nil, status: ScoreStatus, reviewed: Bool = false, createdAt: Date? = nil, game: Game.IDValue, user: User.IDValue) {
         self.id = id
-        self.score = score
+        self.value = value
         self.status = status
         self.reviewed = reviewed
         self.createdAt = createdAt
@@ -39,14 +39,14 @@ extension Score {
     var toResponse: Response {
         get throws {
             try Response(id: requireID(),
-                              score: score,
+                              score: value,
                               status: status,
                               date: createdAt ?? .distantPast
             )
         }
     }
     
-    static func toResponse(scores: [Score]) throws -> [Response] {
+    static func toResponse(_ scores: [Score]) throws -> [Response] {
         var responses = [Score.Response]()
         for score in scores {
             let response = try score.toResponse
@@ -55,6 +55,37 @@ extension Score {
         return responses
     }
 }
+
+extension Score {
+    struct RankingScore: Content {
+        let id: UUID
+        let score: Int
+        let date: Date
+        let user: User.Response
+    }
+    
+    var toRankingScore: RankingScore {
+        get throws {
+            try RankingScore(id: requireID(),
+                             score: value ?? 0,
+                             date: createdAt ?? .distantPast,
+                             user: user.toResponse
+            )
+        }
+    }
+    
+    static func toRankingScore(_ scores: [Score]) throws -> [RankingScore] {
+        var rankingScores = [Score.RankingScore]()
+        
+        for score in scores {
+            let rankingScore = try score.toRankingScore
+            rankingScores.append(rankingScore)
+        }
+        
+        return rankingScores
+    }
+}
+
 
 extension Score {
     struct View: Content {
@@ -74,37 +105,5 @@ extension Score {
                         imageURL: imageURL
             )
         }
-    }
-}
-
-extension Score {
-    struct RankingScore: Content {
-        let id: UUID
-        let score: Int
-        let date: Date
-        let user: User.Response
-        let avatarImage: Data?
-    }
-    
-    var toRankingScore: RankingScore {
-        get throws {
-            try RankingScore(id: requireID(),
-                             score: score ?? 0,
-                             date: createdAt ?? .distantPast,
-                             user: user.toResponse,
-                             avatarImage: user.avatarImage
-            )
-        }
-    }
-    
-    static func toRankingScore(scores: [Score]) throws -> [RankingScore] {
-        var rankingScores = [Score.RankingScore]()
-        
-        for score in scores {
-            let rankingScore = try score.toRankingScore
-            rankingScores.append(rankingScore)
-        }
-        
-        return rankingScores
     }
 }

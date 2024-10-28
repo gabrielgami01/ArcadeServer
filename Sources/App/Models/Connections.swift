@@ -1,10 +1,10 @@
 import Vapor
 import Fluent
 
-extension UserConnections: @unchecked Sendable {}
+extension Connections: @unchecked Sendable {}
 
-final class UserConnections: Model, Content {
-    static let schema = "user_connections"
+final class Connections: Model, Content {
+    static let schema = "connections"
     
     @ID(key: .id) var id: UUID?
     @Timestamp(key: .createdAt, on: .create) var createdAt: Date?
@@ -21,7 +21,7 @@ final class UserConnections: Model, Content {
     }
 }
 
-extension UserConnections {
+extension Connections {
     struct Response: Content {
         let id: UUID
         let user: User.Response
@@ -29,7 +29,7 @@ extension UserConnections {
     }
     
     enum FollowType {
-        case follower, followed
+        case follower, following
     }
     
     var toFollowerResponse: Response {
@@ -50,7 +50,7 @@ extension UserConnections {
         }
     }
     
-    static func toResponse(_ array: [UserConnections], type: FollowType) throws -> [Response] {
+    static func toResponse(_ array: [Connections], type: FollowType) throws -> [Response] {
         var responses = [Response]()
         
         if type == .follower {

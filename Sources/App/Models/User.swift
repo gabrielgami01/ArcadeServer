@@ -12,28 +12,28 @@ final class User: Model, Content {
     @Field(key: .email) var email: String
     @Field(key: .fullName) var fullName: String
     @Field(key: .about) var about: String?
-    @Field(key: .avatarImage) var avatarImage: Data?
+    @Field(key: .avatar) var avatar: Data?
     @Timestamp(key: .createdAt, on: .create) var createdAt: Date?
     
+    @Children(for: \.$user) var reviews: [Review]
+    @Children(for: \.$user) var scores: [Score]
+    @Children(for: \.$user) var sessions: [Session]
+    
     @Siblings(through: FavoriteGame.self, from: \.$user, to: \.$game) var favoriteGames: [Game]
-    @Siblings(through: UserChallenges.self, from: \.$user, to: \.$challenge) var completedChallenges: [Challenge]
-    @Siblings(through: Review.self, from: \.$user, to: \.$game) var gamesReviews: [Game]
-    @Siblings(through: Score.self, from: \.$user, to: \.$game) var gamesScores: [Game]
-    @Siblings(through: UserEmblems.self, from: \.$user, to: \.$challenge) var activeEmblems: [Challenge]
-    @Siblings(through: UserConnections.self, from: \.$follower, to: \.$followed) var following: [User]
-    @Siblings(through: UserConnections.self, from: \.$followed, to: \.$follower) var followers: [User]
-    @Siblings(through: Session.self, from: \.$user, to: \.$game) var gamesSessions: [Game]
+    @Siblings(through: CompletedChallenge.self, from: \.$user, to: \.$challenge) var completedChallenges: [Challenge]
+    @Siblings(through: Connections.self, from: \.$followed, to: \.$follower) var followers: [User]
+    @Siblings(through: Connections.self, from: \.$follower, to: \.$followed) var following: [User]
     
     init() {}
     
-    init(id: UUID? = nil, username: String, password: String, email: String, fullName: String, about: String? = nil, avatarImage: Data? = nil, createdAt: Date? = nil) {
+    init(id: UUID? = nil, username: String, password: String, email: String, fullName: String, about: String? = nil, avatar: Data? = nil, createdAt: Date? = nil) {
         self.id = id
         self.username = username
         self.password = password
         self.email = email
         self.fullName = fullName
         self.about = about
-        self.avatarImage = avatarImage
+        self.avatar = avatar
         self.createdAt = createdAt
     }
 }
@@ -79,7 +79,7 @@ extension User {
                              username: username,
                              fullName: fullName,
                              about: about,
-                             avatarImage: avatarImage)
+                             avatarImage: avatar)
         }
     }
     

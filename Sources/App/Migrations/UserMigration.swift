@@ -12,7 +12,7 @@ struct UserMigration: AsyncMigration {
             .unique(on: .email)
             .field(.fullName, .string, .required)
             .field(.about, .string)
-            .field(.avatarImage, .data)
+            .field(.avatar, .data)
             .field(.createdAt, .datetime)
             .create()
         

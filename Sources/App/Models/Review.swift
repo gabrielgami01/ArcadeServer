@@ -50,7 +50,7 @@ extension Review {
         }
     }
     
-    static func toResponse(reviews: [Review]) throws -> [Response] {
+    static func toResponse(_ reviews: [Review]) throws -> [Response] {
         var responses = [Review.Response]()
         
         for review in reviews {

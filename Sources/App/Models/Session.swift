@@ -4,11 +4,11 @@ import Fluent
 extension Session: @unchecked Sendable {}
 
 final class Session: Model, Content {
-    static let schema = "session"
+    static let schema = "sessions"
     
     @ID(key: .id) var id: UUID?
     @Enum(key: .status) var status: SessionStatus
-    @Timestamp(key: .createdAt, on: .create) var createdAt: Date?
+    @Timestamp(key: .startedAt, on: .create) var startedAt: Date?
     @Timestamp(key: .finishedAt, on: .update) var finishedAt: Date?
     
     @Parent(key: .game) var game: Game
@@ -16,10 +16,10 @@ final class Session: Model, Content {
     
     init() {}
     
-    init(id: UUID? = nil, status: SessionStatus, createdAt: Date? = nil, finishedAt: Date? = nil, game: Game.IDValue, user: User.IDValue) {
+    init(id: UUID? = nil, status: SessionStatus, startedAt: Date? = nil, finishedAt: Date? = nil, game: Game.IDValue, user: User.IDValue) {
         self.id = id
         self.status = status
-        self.createdAt = createdAt
+        self.startedAt = startedAt
         self.finishedAt = finishedAt
         self.$game.id = game
         self.$user.id = user
@@ -40,13 +40,13 @@ extension Session {
     func toResponse(lang: Language) throws -> Response {
         try Response(id: requireID(),
                      status: status,
-                     start: createdAt ?? .distantPast,
+                     start: startedAt ?? .distantPast,
                      end: finishedAt,
                      userID: user.requireID(),
                      game: game.toResponse(lang: lang))
     }
     
-    static func toResponse(sessions: [Session], lang: Language) throws -> [Response] {
+    static func toResponse(_ sessions: [Session], lang: Language) throws -> [Response] {
         var responses = [Session.Response]()
         
         for session in sessions {

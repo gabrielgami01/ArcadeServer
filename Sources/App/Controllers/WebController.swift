@@ -12,11 +12,11 @@ struct WebController: RouteCollection {
     
     @Sendable func scoresList(req: Request) async throws -> View {
         let scores = try await Score
-                    .query(on: req.db)
-                    .filter(\.$status == .unverified)
-                    .with(\.$game)
-                    .with(\.$user)
-                    .all()
+                .query(on: req.db)
+                .filter(\.$status == .unverified)
+                .with(\.$game)
+                .with(\.$user)
+                .all()
         
         let parameters = try ScoreParameters(title: "Scores", scores: scores.map{ try $0.toView })
        
@@ -30,12 +30,10 @@ struct WebController: RouteCollection {
             throw Abort(.notFound, reason: "Score not found")
         }
         
-        if let points = scoreDTO.score {
-            score.score = points
-        }
+        score.value = scoreDTO.score
         score.status = .verified
        
-        try await score.save(on: req.db)
+        try await score.update(on: req.db)
 
         return req.redirect(to: "/scores")
     }
@@ -49,7 +47,7 @@ struct WebController: RouteCollection {
         
         score.status = .denied
        
-        try await score.save(on: req.db)
+        try await score.update(on: req.db)
 
         return req.redirect(to: "/scores")
     }

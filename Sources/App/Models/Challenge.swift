@@ -12,11 +12,9 @@ final class Challenge: Model, Content {
     @Field(key: .descriptionEs) var descriptionEs: String
     @Field(key: .targetScore) var targetScore: Int
     @Enum(key: .type) var type: ChallengeType
-    
     @Parent(key: .game) var game: Game
     
-    @Siblings(through: UserChallenges.self, from: \.$challenge, to: \.$user) var users: [User]
-    @Siblings(through: UserChallenges.self, from: \.$challenge, to: \.$user) var usersEmblem: [User]
+    @Siblings(through: CompletedChallenge.self, from: \.$challenge, to: \.$user) var usersCompleted: [User]
     
     init() {}
     

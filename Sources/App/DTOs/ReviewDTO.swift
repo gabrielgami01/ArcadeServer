@@ -1,4 +1,3 @@
-import Foundation
 import Vapor
 import Fluent
 
@@ -8,4 +7,3 @@ struct CreateReviewDTO: Content {
     let rating: Int
     let gameID: UUID
 }
-

@@ -1,61 +1,60 @@
 import Fluent
 import Vapor
 
-struct FollowController: RouteCollection {
+struct ConnectionsController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
-        let api = routes.grouped("api", "users")
+        let api = routes.grouped("api", "connections")
         
-        let follow = api.grouped(UserPayload.authenticator(), UserPayload.guardMiddleware())
-        follow.get("listFollowing", use: getFollowing)
-        follow.get("listFollowers", use: getFollowers)
-        follow.post("follow", use: followUser)
-        follow.delete("unfollow", ":userID", use: unfollowUser)
+        let connections = api.grouped(UserPayload.authenticator(), UserPayload.guardMiddleware())
+        connections.get("following", use: getFollowing)
+        connections.get("followers", use: getFollowers)
+        connections.post(":userID", use: followUser)
+        connections.delete(":userID", use: unfollowUser)
     }
     
-    @Sendable func getFollowing(req: Request) async throws -> [UserConnections.Response] {
+    @Sendable func getFollowing(req: Request) async throws -> [Connections.Response] {
         let user = try await getUser(req: req)
-
-        let usersFollow = try await user.$following
+        
+        let following = try await user.$following
             .$pivots
             .query(on: req.db)
             .with(\.$followed)
             .all()
-        
-        return try UserConnections.toResponse(usersFollow, type: .followed)
+                
+        return try Connections.toResponse(following, type: .following)
     }
     
-    @Sendable func getFollowers(req: Request) async throws -> [UserConnections.Response] {
+    @Sendable func getFollowers(req: Request) async throws -> [Connections.Response] {
         let user = try await getUser(req: req)
-
-        let usersFollow = try await user.$followers
+        
+        let following = try await user.$followers
             .$pivots
             .query(on: req.db)
             .with(\.$follower)
             .all()
-        
-        return try UserConnections.toResponse(usersFollow, type: .follower)
+                
+        return try Connections.toResponse(following, type: .follower)
     }
     
     @Sendable func followUser(req: Request) async throws -> HTTPStatus {
         let user = try await getUser(req: req)
         
-        let connectionDTO = try req.content.decode(ConnectionDTO.self)
-        guard let otherUser = try await User.find(connectionDTO.userID, on: req.db) else {
+        guard let otherUserID = req.parameters.get("userID", as: UUID.self),
+              let otherUser = try await User.find(otherUserID, on: req.db) else {
             throw Abort(.notFound, reason: "Other user not found")
         }
-
-        if try await user.$following.isAttached(to: otherUser, on: req.db) {
-            throw Abort(.notFound, reason: "Already following this user")
-        } else {
-            try await user.$following.attach(otherUser, on: req.db)
-        }
         
-        return .created
+        if try await !user.$following.isAttached(to: otherUser, on: req.db) {
+            try await user.$following.attach(otherUser, on: req.db)
+            return .created
+        } else {
+            throw Abort(.notFound, reason: "Already following this user")
+        }
     }
     
     @Sendable func unfollowUser(req: Request) async throws -> HTTPStatus {
         let user = try await getUser(req: req)
-        
+            
         guard let otherUserID = req.parameters.get("userID", as: UUID.self),
               let otherUser = try await User.find(otherUserID, on: req.db) else {
             throw Abort(.notFound, reason: "Other user not found")
@@ -63,10 +62,10 @@ struct FollowController: RouteCollection {
 
         if try await user.$following.isAttached(to: otherUser, on: req.db) {
             try await user.$following.detach(otherUser, on: req.db)
+            return .ok
         } else {
             throw Abort(.notFound, reason: "Not following this user")
         }
-        
-        return .ok
     }
+    
 }

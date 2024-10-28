@@ -15,12 +15,12 @@ final class Game: Model, Content {
     @Field(key: .releaseDate) var releaseDate: Date
     @Field(key: .featured) var featured: Bool
     
+    @Children(for: \.$game) var reviews: [Review]
+    @Children(for: \.$game) var scores: [Score]
+    @Children(for: \.$game) var sessions: [Session]
     @Children(for: \.$game) var challenges: [Challenge]
     
     @Siblings(through: FavoriteGame.self, from: \.$game, to: \.$user) var usersFavorites: [User]
-    @Siblings(through: Review.self, from: \.$game, to: \.$user) var usersReviews: [User]
-    @Siblings(through: Score.self, from: \.$game, to: \.$user) var usersScores: [User]
-    @Siblings(through: Session.self, from: \.$game, to: \.$user) var usersSessions: [User]
     
     init() {}
     
@@ -57,7 +57,7 @@ extension Game {
                      featured: featured)
     }
     
-    static func toResponse(games: [Game], lang: Language) throws -> [Response] {
+    static func toResponse(_ games: [Game], lang: Language) throws -> [Response] {
         var responses = [Game.Response]()
         
         for game in games {

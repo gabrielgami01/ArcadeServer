@@ -6,7 +6,7 @@ struct ChallengesController: RouteCollection {
         let api = routes.grouped("api", "challenges")
         
         let challenges = api.grouped(UserPayload.authenticator(), UserPayload.guardMiddleware())
-        challenges.get("list", use: getChallenges)
+        challenges.get(use: getChallenges)
     }
     
     @Sendable func getChallenges(req: Request) async throws -> [Challenge.Response] {

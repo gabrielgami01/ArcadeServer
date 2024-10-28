@@ -8,7 +8,7 @@ struct SessionMigration: AsyncMigration {
         try await database.schema(Session.schema)
             .id()
             .field(.status, status, .required, .custom("DEFAULT 'active'"))
-            .field(.createdAt, .datetime)
+            .field(.startedAt, .datetime)
             .field(.finishedAt, .datetime)
             .field(.game, .uuid, .required, .references(Game.schema, .id))
             .field(.user, .uuid, .required, .references(User.schema, .id))

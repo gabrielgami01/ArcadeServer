@@ -24,8 +24,8 @@ struct UsersController: RouteCollection {
         
         let users = api.grouped(UserPayload.authenticator(),UserPayload.guardMiddleware())
         users.get("refreshJWT", use: refreshJWT)
-        users.put("updateAbout", use: updateUserAbout)
-        users.put("updateAvatar", use: updateUserAvatar)
+        users.patch("updateAbout", use: updateUserAbout)
+        users.patch("updateAvatar", use: updateUserAvatar)
     }
     
     @Sendable func createUser(req: Request) async throws -> HTTPStatus {
@@ -87,7 +87,7 @@ struct UsersController: RouteCollection {
             throw Abort(.notFound, reason: "Invalid format")
         }
         
-        user.avatarImage = imageData
+        user.avatar = imageData
         try await user.update(on: req.db)
         
         return .ok

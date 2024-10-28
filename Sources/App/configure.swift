@@ -24,11 +24,10 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(FavoriteGameMigration())
     app.migrations.add(ReviewMigration())
     app.migrations.add(ScoreMigration())
-    app.migrations.add(ChallengeMigration())
-    app.migrations.add(UserChallengeMigration())
-    app.migrations.add(UserEmblemsMigration())
-    app.migrations.add(UserConnectionsMigration())
     app.migrations.add(SessionMigration())
+    app.migrations.add(ChallengeMigration())
+    app.migrations.add(CompletedChallengeMigration())
+    app.migrations.add(ConnectionsMigration())
     
     app.migrations.add(DataMigration())
     
@@ -43,7 +42,7 @@ public func configure(_ app: Application) async throws {
     app.queues.use(.redis(redisConfig))
     
     app.queues.schedule(CheckChallengeJob())
-        .hourly()
+        .minutely()
         .at(1)
     
     try app.queues.startScheduledJobs()
