@@ -33,8 +33,8 @@ struct CheckChallengeJob: AsyncScheduledJob {
             
             for challenge in challenges {
                 if let scoreValue = score.value, scoreValue >= challenge.targetScore {
-                    if try await !user.$completedChallenges.isAttached(to: challenge, on: db) {
-                        try await user.$completedChallenges.attach(challenge, on: db) { pivot in
+                    if try await !user.$badges.isAttached(to: challenge, on: db) {
+                        try await user.$badges.attach(challenge, on: db) { pivot in
                             pivot.featured = false
                         }
                         print("Challenge completed")

@@ -20,7 +20,7 @@ final class User: Model, Content {
     @Children(for: \.$user) var sessions: [Session]
     
     @Siblings(through: FavoriteGame.self, from: \.$user, to: \.$game) var favoriteGames: [Game]
-    @Siblings(through: CompletedChallenge.self, from: \.$user, to: \.$challenge) var completedChallenges: [Challenge]
+    @Siblings(through: Badge.self, from: \.$user, to: \.$challenge) var badges: [Challenge]
     @Siblings(through: Connections.self, from: \.$followed, to: \.$follower) var followers: [User]
     @Siblings(through: Connections.self, from: \.$follower, to: \.$followed) var following: [User]
     

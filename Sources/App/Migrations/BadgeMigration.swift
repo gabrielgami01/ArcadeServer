@@ -1,9 +1,9 @@
 import Vapor
 import Fluent
 
-struct CompletedChallengeMigration: AsyncMigration {
+struct BadgeMigration: AsyncMigration {
     func prepare(on database: any Database) async throws {
-        try await database.schema(CompletedChallenge.schema)
+        try await database.schema(Badge.schema)
             .id()
             .field(.featured, .bool, .required)
             .field(.order, .int)
@@ -14,7 +14,7 @@ struct CompletedChallengeMigration: AsyncMigration {
     }
     
     func revert(on database: any Database) async throws {
-        try await database.schema(CompletedChallenge.schema)
+        try await database.schema(Badge.schema)
             .delete()
     }
 }

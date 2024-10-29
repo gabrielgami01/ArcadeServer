@@ -14,7 +14,7 @@ final class Challenge: Model, Content {
     @Enum(key: .type) var type: ChallengeType
     @Parent(key: .game) var game: Game
     
-    @Siblings(through: CompletedChallenge.self, from: \.$challenge, to: \.$user) var usersCompleted: [User]
+    @Siblings(through: Badge.self, from: \.$challenge, to: \.$user) var users: [User]
     
     init() {}
     
@@ -56,7 +56,7 @@ extension Challenge {
         
         for challenge in challenges {
             let challengeID = try challenge.requireID()
-            let completed = try await user.$completedChallenges
+            let completed = try await user.$badges
                 .query(on: db)
                 .filter(\.$id == challengeID)
                 .first() != nil

@@ -9,7 +9,7 @@ func routes(_ app: Application) throws {
     try app.register(collection: ScoresController())
     try app.register(collection: SessionController())
     try app.register(collection: ChallengesController())
-    try app.register(collection: CompletedChallengesController())
+    try app.register(collection: BadgesController())
     try app.register(collection: ConnectionsController())
     try app.register(collection: WebController())
 }

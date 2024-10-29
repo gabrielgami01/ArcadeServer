@@ -1,9 +1,9 @@
 import Vapor
 import Fluent
 
-extension CompletedChallenge: @unchecked Sendable {}
+extension Badge: @unchecked Sendable {}
 
-final class CompletedChallenge: Model, Content {
+final class Badge: Model, Content {
     static let schema = "completed_challenges"
     
     @ID(key: .id) var id: UUID?
@@ -25,28 +25,35 @@ final class CompletedChallenge: Model, Content {
     }
 }
 
-extension CompletedChallenge {
+extension Badge {
     struct Response: Content {
         let id: UUID
+        let name: String
         let featured: Bool
         let order: Int?
+        let challengeType: ChallengeType
+        let game: String
         let completedAt: Date
-        let challenge: Challenge.Response
     }
     
-    func toResponse(lang: Language) throws -> Response {
-        try Response(id: requireID(),
-                     featured: featured,
-                     order: order,
-                     completedAt: completedAt ?? .distantPast,
-                     challenge: try challenge.toResponse(isCompleted: true, lang: lang))
+    var toResponse: Response {
+        get throws {
+            try Response(id: requireID(),
+                         name: challenge.name,
+                         featured: featured,
+                         order: order,
+                         challengeType: challenge.type,
+                         game: challenge.game.name,
+                         completedAt: completedAt ?? .distantPast
+            )
+        }
     }
     
-    static func toResponse(_ challenges: [CompletedChallenge], lang: Language) throws -> [Response] {
-        var responses = [CompletedChallenge.Response]()
+    static func toResponse(_ challenges: [Badge]) throws -> [Response] {
+        var responses = [Badge.Response]()
         
         for challenge in challenges {
-            let response = try challenge.toResponse(lang: lang)
+            let response = try challenge.toResponse
             responses.append(response)
         }
         
