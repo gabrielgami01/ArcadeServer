@@ -40,7 +40,7 @@ struct UsersController: RouteCollection {
             }
             .first()
         guard existingUser == nil else {
-            throw Abort(.badRequest, reason: "Error procesing request.")
+            throw Abort(.conflict, reason: "Invalid username or email.")
         }
         
         user.password = try Bcrypt.hash("\(user.username)@\(user.password)")
