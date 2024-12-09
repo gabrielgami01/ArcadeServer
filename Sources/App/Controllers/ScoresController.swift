@@ -61,16 +61,13 @@ struct ScoresController: RouteCollection {
         let directory = DirectoryConfiguration.detect().publicDirectory
         let imageDirectory = URL(fileURLWithPath: directory.appending("scores"), isDirectory: true)
         
-        // Crea el directorio si no existe
         try FileManager.default.createDirectory(at: imageDirectory, withIntermediateDirectories: true, attributes: nil)
 
         let filename = "\(scoreID).jpg"
         let fileURL = imageDirectory.appendingPathComponent(filename)
 
-        // Convierte los datos del archivo a ByteBuffer
         let byteBuffer = ByteBuffer(data: scoreDTO.image)
 
-        // Escribe los datos de la imagen al archivo
         try await req.fileio.writeFile(byteBuffer, at: fileURL.path)
 
         return .created
